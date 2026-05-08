@@ -310,7 +310,7 @@ try {
   await click(send, "샘플 기록 적용", 350);
   await assertText(send, "업로드 미리보기");
   await click(send, "3D 월드 항해 시작", 1800);
-  await assertText(send, "취향 거리 시각화");
+  await assertText(send, "나랑 가장 먼 섬의 컨텐츠 살펴보기");
 
   const canvasCheck = await canvasPixelCheck(send);
 

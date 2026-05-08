@@ -98,7 +98,7 @@ export const subCategoriesByMiddle: Record<string, string[]> = {
   "럭셔리/하이엔드": ["명품 하울", "디자이너 브랜드", "런웨이 리뷰", "아카이브 패션", "하이엔드 코디"],
 
   // ── 스포츠 ──
-  축구: ["EPL/프리미어리그", "라리가/챔피언스리그", "K리그", "전술 분석", "풋살/스트릿 축구"],
+  축구: ["EPL/프리미어리그", "라리가/챔피언스리그", "K리그", "풋살/스트릿 축구"],
   야구: ["KBO 리그", "MLB 메이저리그", "직관/응원 문화", "데이터 야구", "레전드 명장면"],
   농구: ["NBA 하이라이트", "KBL", "스트릿볼", "슬램덩크 감성", "포지션/전술 분석"],
   e스포츠: ["리그 오브 레전드", "발로란트", "배틀그라운드", "오버워치", "스타크래프트"],
@@ -161,12 +161,13 @@ export const platformGuides = [
 
 export const sampleUsers: User[] = [
   {
+    // 내 섬: 음악(힙합) × 스포츠(야구+축구) → Travis Scott, 야구, K리그 선택
     id: CURRENT_USER_ID,
     nickname: "내 섬",
-    mainKeyword: "외힙",
-    keyword1: "외힙",
-    keyword2: "다크무드",
-    keyword3: "감각편집",
+    mainKeyword: "힙합",
+    keyword1: "Travis Scott",
+    keyword2: "K리그",
+    keyword3: "야구",
     islandType: "neon-city",
     islandLevel: 1,
     likes: 1,
@@ -174,296 +175,303 @@ export const sampleUsers: User[] = [
     growthState: "seed",
     islandPositionX: 0,
     islandPositionY: 0,
-    tasteDescription: "밤에 듣는 베이스, 선명한 편집, 도시적인 텐션을 좋아해요.",
-    representativeContent: "FEEL THE NIGHT BUS"
+    tasteDescription: "밤 비트와 낮의 그라운드가 공존하는 스포츠×힙합 취향 섬입니다.",
+    representativeContent: "Travis Scott UTOPIA 들으며 야구장 직관"
   },
   {
-    id: "luna",
-    nickname: "루나의 파도실",
-    mainKeyword: "몽환적",
-    keyword1: "몽환적",
-    keyword2: "시티팝",
-    keyword3: "필름무드",
-    islandType: "dreamy",
-    islandLevel: 2,
-    likes: 4,
-    affinityPoints: 4,
-    growthState: "harbor",
-    islandPositionX: -3.8,
-    islandPositionY: 2.4,
-    tasteDescription: "밤 산책, 흐린 신스, 오래된 필름 같은 콘텐츠를 모아요.",
-    representativeContent: "Midnight City Pop"
-  },
-  {
-    id: "nero",
-    nickname: "네로 화산섬",
-    mainKeyword: "강렬함",
-    keyword1: "강렬함",
-    keyword2: "스릴러",
-    keyword3: "반전",
-    islandType: "volcanic",
-    islandLevel: 2,
-    likes: 5,
-    affinityPoints: 5,
-    growthState: "harbor",
-    islandPositionX: 4.6,
-    islandPositionY: -1.7,
-    tasteDescription: "조용히 시작해서 마지막에 폭발하는 이야기에 약합니다.",
-    representativeContent: "핀처식 반전 구조 해부"
-  },
-  {
-    id: "mora",
-    nickname: "모라의 호수",
-    mainKeyword: "잔잔함",
-    keyword1: "잔잔함",
-    keyword2: "다큐감성",
-    keyword3: "사유형",
-    islandType: "lake",
-    islandLevel: 1,
-    likes: 2,
-    affinityPoints: 2,
-    growthState: "seed",
-    islandPositionX: -7.5,
-    islandPositionY: -4.8,
-    tasteDescription: "느린 화면, 긴 호흡, 보고 나서 생각이 남는 기록을 좋아해요.",
-    representativeContent: "느린 자연 다큐"
-  },
-  {
-    id: "kai",
-    nickname: "카이 네온항구",
-    mainKeyword: "외힙",
-    keyword1: "외힙",
-    keyword2: "실험적",
-    keyword3: "스트릿",
+    // 정욱: 야구(KBO) + 힙합(드레이크) → score 0.75 (가까운 취향 해역)
+    // 야구 직접 매칭 + 힙합 직접 매칭 + 힙합 패밀리 부스트
+    id: "joon",
+    nickname: "정욱의 그라운드",
+    mainKeyword: "야구",
+    keyword1: "KBO 리그",
+    keyword2: "힙합",
+    keyword3: "드레이크",
     islandType: "neon-city",
     islandLevel: 3,
     likes: 8,
     affinityPoints: 8,
     growthState: "garden",
-    islandPositionX: 2.8,
-    islandPositionY: 3.8,
-    tasteDescription: "비트가 이상할수록 좋고, 영상은 컷이 빠를수록 좋아요.",
-    representativeContent: "Off-grid Rap Texture"
+    islandPositionX: 0,
+    islandPositionY: 0,
+    tasteDescription: "경기장 직관 후 힙합 듣는 게 공식 루틴이에요. 야구 보며 드레이크 틀면 완성.",
+    representativeContent: "잠실 직관 브이로그 × 힙합 플레이리스트"
   },
   {
-    id: "sora",
-    nickname: "소라 숲섬",
-    mainKeyword: "자연친화",
-    keyword1: "자연친화",
-    keyword2: "힐링",
-    keyword3: "브이로그",
-    islandType: "forest",
+    // 서연: 축구(K리그+EPL+전술) → score 0.5 (가까운 취향 해역)
+    // K리그 직접 매칭 + 축구 패밀리 부스트
+    id: "seo",
+    nickname: "서연의 축구섬",
+    mainKeyword: "축구",
+    keyword1: "K리그",
+    keyword2: "EPL/프리미어리그",
+    keyword3: "전술 분석",
+    islandType: "volcanic",
+    islandLevel: 2,
+    likes: 5,
+    affinityPoints: 5,
+    growthState: "harbor",
+    islandPositionX: 0,
+    islandPositionY: 0,
+    tasteDescription: "K리그 현장 응원과 EPL 새벽 중계를 둘 다 챙기는 축구 올인 취향이에요.",
+    representativeContent: "전북 vs 울산 직관 + 시티 전술 분석"
+  },
+  {
+    // 민혁: 힙합(켄드릭+빈지노+기리보이) → score 0.5 (가까운 취향 해역)
+    // 힙합 mainKeyword 직접 매칭 + 힙합 패밀리 부스트
+    id: "min",
+    nickname: "민혁의 비트섬",
+    mainKeyword: "힙합",
+    keyword1: "켄드릭 라마",
+    keyword2: "빈지노",
+    keyword3: "기리보이",
+    islandType: "neon-city",
+    islandLevel: 2,
+    likes: 4,
+    affinityPoints: 4,
+    growthState: "harbor",
+    islandPositionX: 0,
+    islandPositionY: 0,
+    tasteDescription: "국힙과 외힙을 오가며 가사 한 줄에 꽂히는 취향이에요.",
+    representativeContent: "빈지노 × 켄드릭 라마 교차 감상 기록"
+  },
+  {
+    // 예진: EPL+라리가+전술 → score 0.25 (건너볼 만한 취향 거리)
+    // K리그 없어서 직접 매칭 0 + 축구 패밀리 부스트만
+    id: "yejin",
+    nickname: "예진의 전술섬",
+    mainKeyword: "축구",
+    keyword1: "EPL/프리미어리그",
+    keyword2: "라리가/챔피언스리그",
+    keyword3: "전술 분석",
+    islandType: "experimental",
     islandLevel: 4,
     likes: 11,
     affinityPoints: 11,
     growthState: "beacon",
-    islandPositionX: 7.9,
-    islandPositionY: 5.5,
-    tasteDescription: "조용한 일상 브이로그와 자연 다큐 사이를 자주 건너요.",
-    representativeContent: "숲에서 보내는 세 시간 브이로그"
+    islandPositionX: 0,
+    islandPositionY: 0,
+    tasteDescription: "전술 분석 유튜브와 챔피언스리그 하이라이트로 채워진 유럽 중심 축구 취향이에요.",
+    representativeContent: "맨시티 4-3 전술 해부 × UCL 8강 하이라이트"
   },
   {
-    id: "zero",
-    nickname: "제로 실험군도",
-    mainKeyword: "실험적",
-    keyword1: "실험적",
-    keyword2: "인디게임",
-    keyword3: "기묘함",
-    islandType: "experimental",
+    // 하린: 아이돌(NewJeans+aespa+LE SSERAFIM) → score 0 (알고리즘 바깥 먼바다)
+    // 겹치는 키워드 없음, 패밀리도 없음
+    id: "harin",
+    nickname: "하린의 별빛섬",
+    mainKeyword: "아이돌",
+    keyword1: "NewJeans",
+    keyword2: "aespa",
+    keyword3: "LE SSERAFIM",
+    islandType: "dreamy",
+    islandLevel: 4,
+    likes: 13,
+    affinityPoints: 13,
+    growthState: "beacon",
+    islandPositionX: 0,
+    islandPositionY: 0,
+    tasteDescription: "컴백 시즌에 가장 바빠지는 4세대 아이돌 중심 취향이에요.",
+    representativeContent: "NewJeans Supernatural × aespa Whiplash 비교 감상"
+  },
+  {
+    // 지수: 에세이+일상+잔잔함 → score 0 (알고리즘 바깥 먼바다)
+    // 겹치는 키워드 없음, 패밀리도 없음
+    id: "jisu",
+    nickname: "지수의 호수 서가",
+    mainKeyword: "에세이/자기계발",
+    keyword1: "일상 에세이",
+    keyword2: "관계/감정 에세이",
+    keyword3: "잔잔함",
+    islandType: "lake",
     islandLevel: 5,
     likes: 16,
     affinityPoints: 16,
     growthState: "legend",
-    islandPositionX: -8.8,
-    islandPositionY: 4.7,
-    tasteDescription: "규칙이 살짝 어긋난 게임, 영상, 음악을 수집합니다.",
-    representativeContent: "엔딩이 없는 인디게임의 매력"
+    islandPositionX: 0,
+    islandPositionY: 0,
+    tasteDescription: "느리게 읽고 오래 생각하는 에세이와 힐링 콘텐츠로 채운 조용한 서가예요.",
+    representativeContent: "하루 한 챕터: 관계 에세이 독서 기록"
   }
 ];
 
-function randomBetween(min: number, max: number) {
-  return min + Math.random() * (max - min);
-}
-
-function distanceSquared(ax: number, ay: number, bx: number, by: number) {
-  const dx = ax - bx;
-  const dy = ay - by;
-  return dx * dx + dy * dy;
-}
-
-export function randomizeIslandPositions(users: User[]) {
-  const minDistance = 4.2;
-  const minDistanceSq = minDistance * minDistance;
-  const minRadius = 2.0;
-  const maxRadius = 10.0;
-
-  const placed: Array<{ id: string; x: number; y: number }> = [];
-
-  return users.map((user, index) => {
-    if (index === 0) {
-      const x = 0;
-      const y = 0;
-      placed.push({ id: user.id, x, y });
-      return { ...user, islandPositionX: x, islandPositionY: y };
-    }
-
-    let x = user.islandPositionX;
-    let y = user.islandPositionY;
-
-    for (let attempt = 0; attempt < 250; attempt += 1) {
-      const angle = randomBetween(0, Math.PI * 2);
-      const radius = randomBetween(minRadius, maxRadius);
-      const candidateX = Math.cos(angle) * radius;
-      const candidateY = Math.sin(angle) * radius;
-
-      const ok = placed.every(
-        (prev) => distanceSquared(prev.x, prev.y, candidateX, candidateY) >= minDistanceSq
-      );
-
-      if (ok) {
-        x = candidateX;
-        y = candidateY;
-        break;
-      }
-    }
-
-    placed.push({ id: user.id, x, y });
-    return { ...user, islandPositionX: x, islandPositionY: y };
-  });
-}
-
 export const sampleMedia: MediaItem[] = [
+  // ── 내 섬 (Travis Scott × 야구 × K리그) ──
   {
     id: "me-1",
     userId: CURRENT_USER_ID,
     type: "music",
-    title: "FEEL THE NIGHT BUS",
-    creator: "Kendrick Route",
+    title: "UTOPIA – Travis Scott",
+    creator: "Travis Scott",
     platform: "Spotify",
-    thumbnail: "linear-gradient(135deg, #1e1b4b, #22d3ee)",
+    thumbnail: "linear-gradient(135deg, #1c0533, #f97316)",
     url: "https://open.spotify.com",
-    tags: ["외힙", "다크무드", "베이스"]
+    tags: ["Travis Scott", "힙합", "앨범"]
   },
   {
     id: "me-2",
     userId: CURRENT_USER_ID,
     type: "video",
-    title: "도시 야경을 12컷으로 자르는 법",
-    creator: "Edit Pier",
+    title: "잠실 야구장 직관 브이로그 – 비 오는 날 더블헤더",
+    creator: "그라운드 로그",
     platform: "YouTube",
-    thumbnail: "linear-gradient(135deg, #0f172a, #f472b6)",
+    thumbnail: "linear-gradient(135deg, #0c1a2e, #2563eb)",
     url: "https://youtube.com",
-    tags: ["감각편집", "유튜브", "밤"]
+    tags: ["KBO 리그", "야구", "직관"]
   },
   {
     id: "me-3",
     userId: CURRENT_USER_ID,
+    type: "video",
+    title: "K리그 이번 주 베스트골 5 – 전북 vs 울산",
+    creator: "K리그 공식",
+    platform: "YouTube",
+    thumbnail: "linear-gradient(135deg, #0a2416, #22c55e)",
+    url: "https://youtube.com",
+    tags: ["K리그", "축구", "골"]
+  },
+
+  // ── 정욱 (KBO + 힙합, score 0.75) ──
+  {
+    id: "joon-1",
+    userId: "joon",
+    type: "video",
+    title: "류현진 10K 모든 투구 다시보기 풀버전 (04. 07.)",
+    creator: "Eagles TV",
+    platform: "YouTube",
+    thumbnail: "linear-gradient(135deg, #1e1b4b, #60a5fa)",
+    url: "https://www.youtube.com/watch?v=zovARbX2B2g",
+    tags: ["KBO 리그", "야구", "레전드"]
+  },
+  {
+    id: "joon-2",
+    userId: "joon",
     type: "music",
-    title: "Tyler-like Garden Synth",
-    creator: "Odd Coast",
+    title: "One Dance – Drake",
+    creator: "Drake",
+    platform: "Spotify",
+    thumbnail: "linear-gradient(135deg, #1a0a2e, #facc15)",
+    url: "https://open.spotify.com",
+    tags: ["드레이크", "힙합", "R&B"]
+  },
+
+  // ── 서연 (K리그 + EPL + 전술, score 0.5) ──
+  {
+    id: "seo-1",
+    userId: "seo",
+    type: "video",
+    title: "K리그 2024 시즌 결산 – 전북의 부활",
+    creator: "풋볼리스트",
+    platform: "YouTube",
+    thumbnail: "linear-gradient(135deg, #0c2340, #16a34a)",
+    url: "https://youtube.com",
+    tags: ["K리그", "축구", "전북"]
+  },
+  {
+    id: "seo-2",
+    userId: "seo",
+    type: "video",
+    title: "맨시티 4-3 고전 전술 해부 – 펩의 선택",
+    creator: "축구 전술 TV",
+    platform: "YouTube",
+    thumbnail: "linear-gradient(135deg, #0a1628, #38bdf8)",
+    url: "https://youtube.com",
+    tags: ["EPL/프리미어리그", "전술 분석", "맨시티"]
+  },
+
+  // ── 민혁 (힙합 국힙+외힙, score 0.5) ──
+  {
+    id: "min-1",
+    userId: "min",
+    type: "music",
+    title: "Not Like Us – Kendrick Lamar",
+    creator: "Kendrick Lamar",
+    platform: "Spotify",
+    thumbnail: "linear-gradient(135deg, #1a0a0a, #ef4444)",
+    url: "https://open.spotify.com",
+    tags: ["켄드릭 라마", "힙합", "디스"]
+  },
+  {
+    id: "min-2",
+    userId: "min",
+    type: "music",
+    title: "Dimes – 빈지노",
+    creator: "빈지노",
     platform: "Apple Music",
-    thumbnail: "linear-gradient(135deg, #064e3b, #facc15)",
+    thumbnail: "linear-gradient(135deg, #0f172a, #a78bfa)",
     url: "https://music.apple.com",
-    tags: ["타일러 더 크리에이터", "실험적", "외힙"]
+    tags: ["빈지노", "힙합", "국힙"]
+  },
+
+  // ── 예진 (EPL+라리가+전술, score 0.25) ──
+  {
+    id: "yejin-1",
+    userId: "yejin",
+    type: "video",
+    title: "UCL 8강 하이라이트 – 이번 시즌 최고의 경기",
+    creator: "UEFA 공식",
+    platform: "YouTube",
+    thumbnail: "linear-gradient(135deg, #0b0a1e, #7c3aed)",
+    url: "https://youtube.com",
+    tags: ["라리가/챔피언스리그", "축구", "UCL"]
   },
   {
-    id: "luna-1",
-    userId: "luna",
+    id: "yejin-2",
+    userId: "yejin",
+    type: "video",
+    title: "아스날 하이프레스 전술 완벽 분석",
+    creator: "Tactics Board KR",
+    platform: "YouTube",
+    thumbnail: "linear-gradient(135deg, #1c0a0a, #f97316)",
+    url: "https://youtube.com",
+    tags: ["EPL/프리미어리그", "전술 분석", "아스날"]
+  },
+
+  // ── 하린 (아이돌, score 0) ──
+  {
+    id: "harin-1",
+    userId: "harin",
     type: "music",
-    title: "Midnight City Pop",
-    creator: "Neon Laundry",
+    title: "Supernatural – NewJeans",
+    creator: "NewJeans",
     platform: "Spotify",
-    thumbnail: "linear-gradient(135deg, #155e75, #f9a8d4)",
+    thumbnail: "linear-gradient(135deg, #0a1a2e, #f472b6)",
     url: "https://open.spotify.com",
-    tags: ["몽환적", "시티팝", "밤산책"]
+    tags: ["NewJeans", "아이돌", "팝"]
   },
   {
-    id: "luna-2",
-    userId: "luna",
+    id: "harin-2",
+    userId: "harin",
     type: "video",
-    title: "도쿄 필름 브이로그: 비 오는 목요일",
-    creator: "Luma Frames",
+    title: "aespa Whiplash 직캠 – 에스파 4K 풀캠",
+    creator: "팬캠 아카이브",
     platform: "YouTube",
-    thumbnail: "linear-gradient(135deg, #334155, #a7f3d0)",
+    thumbnail: "linear-gradient(135deg, #0e0221, #a78bfa)",
     url: "https://youtube.com",
-    tags: ["필름무드", "브이로그", "감성"]
+    tags: ["aespa", "아이돌", "직캠"]
   },
+
+  // ── 지수 (에세이+힐링, score 0) ──
   {
-    id: "nero-1",
-    userId: "nero",
+    id: "jisu-1",
+    userId: "jisu",
     type: "video",
-    title: "핀처식 반전 구조 해부",
-    creator: "Dark Cut Lab",
+    title: "하루 한 챕터: 관계 에세이 독서 기록",
+    creator: "조용한 서가",
     platform: "YouTube",
-    thumbnail: "linear-gradient(135deg, #450a0a, #f97316)",
+    thumbnail: "linear-gradient(135deg, #0f1f2e, #94a3b8)",
     url: "https://youtube.com",
-    tags: ["데이비드 핀처", "스릴러", "반전"]
+    tags: ["일상 에세이", "독서", "힐링"]
   },
   {
-    id: "nero-2",
-    userId: "nero",
+    id: "jisu-2",
+    userId: "jisu",
     type: "video",
-    title: "Black Mirror 같은 단편 5선",
-    creator: "Episode Zero",
-    platform: "Netflix",
-    thumbnail: "linear-gradient(135deg, #111827, #ef4444)",
-    url: "https://netflix.com",
-    tags: ["블랙미러 스타일", "SF", "불안"]
-  },
-  {
-    id: "mora-1",
-    userId: "mora",
-    type: "video",
-    title: "느린 자연 다큐: 빛이 숲을 지나는 시간",
-    creator: "Quiet Planet",
+    title: "새벽 2시 감정 에세이: 혼자여서 괜찮은 것들",
+    creator: "밤의 서재",
     platform: "YouTube",
-    thumbnail: "linear-gradient(135deg, #164e63, #bef264)",
+    thumbnail: "linear-gradient(135deg, #1a1a2e, #c7d2fe)",
     url: "https://youtube.com",
-    tags: ["다큐멘터리", "잔잔함", "자연"]
-  },
-  {
-    id: "kai-1",
-    userId: "kai",
-    type: "music",
-    title: "Off-grid Rap Texture",
-    creator: "JID Archive",
-    platform: "Spotify",
-    thumbnail: "linear-gradient(135deg, #312e81, #fb7185)",
-    url: "https://open.spotify.com",
-    tags: ["외힙", "실험적", "JID"]
-  },
-  {
-    id: "kai-2",
-    userId: "kai",
-    type: "video",
-    title: "스트릿 룩북인데 편집이 미쳤다",
-    creator: "Street Render",
-    platform: "TikTok",
-    thumbnail: "linear-gradient(135deg, #020617, #67e8f9)",
-    url: "https://tiktok.com",
-    tags: ["스트릿", "감각편집", "패션"]
-  },
-  {
-    id: "sora-1",
-    userId: "sora",
-    type: "video",
-    title: "숲에서 보내는 세 시간 브이로그",
-    creator: "Green Room",
-    platform: "YouTube",
-    thumbnail: "linear-gradient(135deg, #14532d, #fde68a)",
-    url: "https://youtube.com",
-    tags: ["자연친화", "힐링", "브이로그"]
-  },
-  {
-    id: "zero-1",
-    userId: "zero",
-    type: "video",
-    title: "엔딩이 없는 인디게임의 매력",
-    creator: "Strange Loop",
-    platform: "YouTube",
-    thumbnail: "linear-gradient(135deg, #581c87, #2dd4bf)",
-    url: "https://youtube.com",
-    tags: ["실험적", "인디게임", "기묘함"]
+    tags: ["관계/감정 에세이", "잔잔함", "새벽"]
   }
 ];
 
@@ -474,40 +482,46 @@ const keywordRules: Array<{
   description: string;
 }> = [
   {
-    match: ["힙합", "켄드릭 라마", "드레이크", "타일러 더 크리에이터", "Travis Scott", "JID", "스트릿"],
-    keywords: ["외힙", "다크무드", "감각편집"],
+    match: ["힙합", "Travis Scott", "켄드릭 라마", "드레이크", "Tyler, The Creator", "빈지노", "기리보이", "Zico"],
+    keywords: ["힙합", "비트", "야간 무드"],
     islandType: "neon-city",
-    description: "비트, 컷, 야간 무드가 촘촘하게 이어지는 도시형 취향 섬입니다."
+    description: "비트와 야간 텐션이 촘촘하게 이어지는 도시형 취향 섬입니다."
   },
   {
-    match: ["스릴러", "데이비드 핀처", "크리스토퍼 놀란", "블랙미러 스타일", "반전", "범죄"],
-    keywords: ["서사중심", "다크무드", "몰입형"],
+    match: ["야구", "KBO 리그", "MLB 메이저리그", "직관/응원 문화", "데이터 야구", "레전드 명장면"],
+    keywords: ["야구", "그라운드", "직관"],
     islandType: "volcanic",
-    description: "천천히 끓다가 마지막에 터지는 이야기 중심의 화산섬입니다."
+    description: "경기 흐름이 폭발하는 순간에 심장이 뛰는 야구 취향 섬입니다."
   },
   {
-    match: ["브이로그", "감성", "시티팝", "필름무드", "해외일상", "로맨스"],
+    match: ["축구", "K리그", "EPL/프리미어리그", "라리가/챔피언스리그", "전술 분석"],
+    keywords: ["축구", "전술", "현장감"],
+    islandType: "forest",
+    description: "전술 분석부터 현장 응원까지 풀코스 축구 취향 섬입니다."
+  },
+  {
+    match: ["일상/감성 브이로그", "새벽/밤 브이로그", "시티팝", "필름무드", "몽환적", "감성적"],
     keywords: ["몽환적", "감성적", "도시산책"],
     islandType: "dreamy",
     description: "느슨한 리듬과 부드러운 색이 떠다니는 몽환형 취향 섬입니다."
   },
   {
-    match: ["다큐멘터리", "책", "에세이", "인문", "과학", "클래식", "잔잔함"],
-    keywords: ["잔잔함", "사유형", "다큐감성"],
+    match: ["일상 에세이", "관계/감정 에세이", "잔잔함", "힐링", "자연친화", "다큐멘터리"],
+    keywords: ["잔잔함", "사유형", "힐링"],
     islandType: "lake",
     description: "생각이 오래 남는 콘텐츠가 호수처럼 고이는 조용한 섬입니다."
   },
   {
-    match: ["자연", "힐링", "러닝", "여행예능", "일상", "고프코어"],
-    keywords: ["자연친화", "힐링", "느린호흡"],
-    islandType: "forest",
-    description: "속도를 낮추고 오래 머무르는 숲형 취향 섬입니다."
-  },
-  {
-    match: ["인디게임", "실험적", "현대음악", "A24", "사이버펑크", "기묘한 썸네일"],
+    match: ["인디게임", "소울라이크", "A24 스타일", "SF/사이버펑크", "실험 영화", "실험적 아트 게임"],
     keywords: ["실험적", "비정형", "기묘함"],
     islandType: "experimental",
     description: "규칙을 살짝 비틀어 새 길을 만드는 비정형 취향 섬입니다."
+  },
+  {
+    match: ["아이돌", "NewJeans", "aespa", "LE SSERAFIM", "IVE", "BTS", "BLACKPINK"],
+    keywords: ["아이돌", "컴백", "팬심"],
+    islandType: "dreamy",
+    description: "컴백 시즌마다 새롭게 채워지는 아이돌 중심 취향 섬입니다."
   }
 ];
 
@@ -542,9 +556,20 @@ export function similarityScore(a: User, b: User) {
   const right = [b.mainKeyword, b.keyword1, b.keyword2, b.keyword3];
   const matches = right.filter((keyword) => left.has(keyword)).length;
   const closeFamilies = [
-    ["외힙", "다크무드", "감각편집", "실험적", "스트릿"],
-    ["몽환적", "감성적", "필름무드", "도시산책", "시티팝"],
-    ["잔잔함", "사유형", "다큐감성", "자연친화", "힐링"]
+    // 힙합 클러스터 (국힙·외힙 공통)
+    ["힙합", "Travis Scott", "켄드릭 라마", "드레이크", "Tyler, The Creator", "빈지노", "기리보이", "pH-1", "Zico"],
+    // 야구 클러스터
+    ["야구", "KBO 리그", "MLB 메이저리그", "직관/응원 문화", "데이터 야구", "레전드 명장면"],
+    // 축구 클러스터 (K리그·유럽 공통)
+    ["축구", "K리그", "EPL/프리미어리그", "라리가/챔피언스리그", "전술 분석", "풋살/스트릿 축구"],
+    // 밴드/인디 클러스터
+    ["밴드/록", "검정치마", "실리카겔", "잔나비", "혁오", "새소년", "The 1975", "Arctic Monkeys", "Radiohead"],
+    // 아이돌 클러스터
+    ["아이돌", "NewJeans", "aespa", "LE SSERAFIM", "IVE", "BTS", "BLACKPINK", "NCT 127", "Stray Kids"],
+    // 감성 무드 클러스터 (브이로그·시티팝)
+    ["몽환적", "감성적", "시티팝", "필름무드", "일상/감성 브이로그", "새벽/밤 브이로그"],
+    // 힐링·조용 클러스터
+    ["잔잔함", "사유형", "다큐감성", "자연친화", "힐링", "느린호흡", "일상 에세이", "관계/감정 에세이"]
   ];
   const familyBoost = closeFamilies.some(
     (family) =>
@@ -556,6 +581,87 @@ export function similarityScore(a: User, b: User) {
 
   return Math.min(1, (matches + familyBoost) / 4);
 }
+
+function stableJitter01(id: string) {
+  let h = 2166136261;
+
+  for (let i = 0; i < id.length; i += 1) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+
+  return ((h >>> 0) % 10007) / 10007;
+}
+
+function distanceSquared(ax: number, ay: number, bx: number, by: number) {
+  const dx = ax - bx;
+  const dy = ay - by;
+  return dx * dx + dy * dy;
+}
+
+/**
+ * 내 섬(0,0) 기준 취향 유사도가 높을수록 가깝게, 낮을수록 먼 링에 배치합니다.
+ */
+export function layoutIslandsByTasteDistance(users: User[]): User[] {
+  const me = users.find((u) => u.id === CURRENT_USER_ID);
+  if (!me) {
+    return users;
+  }
+
+  const minSep = 5.5;
+  const minSepSq = minSep * minSep;
+  const minRadius = 2.2;
+  const maxRadius = 17.0;
+
+  const others = users.filter((u) => u.id !== CURRENT_USER_ID);
+  const ranked = others
+    .map((u) => ({ u, score: similarityScore(me, u) }))
+    .sort((a, b) => b.score - a.score);
+
+  const placed: Array<{ x: number; y: number }> = [{ x: 0, y: 0 }];
+
+  const positioned = new Map<string, User>();
+
+  ranked.forEach(({ u, score }, index) => {
+    const gap = maxRadius - minRadius;
+    const targetRadius = minRadius + (1 - score) * gap;
+    const baseAngle = (index / Math.max(ranked.length, 1)) * Math.PI * 2 + stableJitter01(u.id) * 0.35;
+
+    let bestX = Math.cos(baseAngle) * targetRadius;
+    let bestY = Math.sin(baseAngle) * targetRadius;
+
+    for (let attempt = 0; attempt < 140; attempt += 1) {
+      const ring = targetRadius + (attempt % 9) * 0.65;
+      const twist = baseAngle + (attempt * 0.41) % (Math.PI / 2);
+      const cx = Math.cos(twist) * ring;
+      const cy = Math.sin(twist) * ring;
+
+      const ok = placed.every((p) => distanceSquared(p.x, p.y, cx, cy) >= minSepSq);
+
+      if (ok) {
+        bestX = cx;
+        bestY = cy;
+        placed.push({ x: cx, y: cy });
+        positioned.set(u.id, { ...u, islandPositionX: cx, islandPositionY: cy });
+        return;
+      }
+    }
+
+    placed.push({ x: bestX, y: bestY });
+    positioned.set(u.id, { ...u, islandPositionX: bestX, islandPositionY: bestY });
+  });
+
+  return users.map((user) => {
+    if (user.id === CURRENT_USER_ID) {
+      return { ...user, islandPositionX: 0, islandPositionY: 0 };
+    }
+
+    return positioned.get(user.id) ?? user;
+  });
+}
+
+/** @deprecated 레이아웃은 취향 거리 기준을 사용하세요 (`layoutIslandsByTasteDistance`). */
+export const randomizeIslandPositions = layoutIslandsByTasteDistance;
 
 export function islandDistanceLabel(current: User, target: User) {
   const score = similarityScore(current, target);

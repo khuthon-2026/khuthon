@@ -483,6 +483,158 @@ a {
   font-weight: 800;
 }
 
+/* ── 칩 스텝 (온보딩 스텝 2·3) ── */
+.chip-step-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 6rem 2.5rem 8rem min(27rem, 38vw);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.chip-hive-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chip-grid {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.45rem;
+  align-content: flex-start;
+}
+
+.chip-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--chip-border, rgba(16, 36, 51, 0.22));
+  border-radius: 999px;
+  background: var(--chip-bg, rgba(248, 246, 226, 0.46));
+  color: #102433;
+  font-size: 0.88rem;
+  font-weight: 740;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 140ms ease,
+    box-shadow 180ms ease;
+}
+
+/* 짝수 칩을 살짝 아래로 밀어 벌집 느낌 */
+.chip-item:nth-child(2n) {
+  transform: translateY(0.38rem);
+}
+
+.chip-item:nth-child(2n):hover {
+  transform: translateY(0.38rem) scale(1.04);
+}
+
+.chip-item:hover {
+  transform: scale(1.04);
+  border-color: var(--chip-border, rgba(16, 36, 51, 0.42));
+  background: rgba(248, 246, 226, 0.72);
+}
+
+.chip-item.selected {
+  border-color: rgba(20, 54, 74, 0.55);
+  background: rgba(20, 54, 74, 0.82);
+  box-shadow: 0 0 0 2px rgba(20, 54, 74, 0.18),
+    0 0.5rem 1.6rem rgba(20, 54, 74, 0.22);
+  color: #f6f1df;
+}
+
+.chip-item.last-clicked {
+  border-style: solid;
+}
+
+.chip-check {
+  font-size: 0.72rem;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* 추천 섹션 */
+.chip-recommend-section {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.6rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(16, 36, 51, 0.12);
+  border-radius: 12px;
+  background: rgba(244, 248, 242, 0.42);
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+}
+
+.chip-recommend-label {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  margin-bottom: 0.75rem;
+  color: rgba(16, 36, 51, 0.5);
+  font-size: 0.75rem;
+  font-weight: 780;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.chip-recommend-label strong {
+  color: rgba(16, 36, 51, 0.82);
+  font-weight: 840;
+}
+
+.chip-recommend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.38rem;
+}
+
+.chip-recommend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.42rem 0.82rem;
+  border: 1px solid rgba(16, 36, 51, 0.18);
+  border-radius: 999px;
+  background: rgba(248, 246, 226, 0.38);
+  color: rgba(16, 36, 51, 0.72);
+  font-size: 0.82rem;
+  font-weight: 720;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.chip-recommend-item:hover {
+  border-color: rgba(44, 120, 110, 0.5);
+  background: rgba(44, 120, 110, 0.12);
+  color: #102433;
+}
+
+.chip-recommend-item.selected {
+  border-color: rgba(20, 54, 74, 0.5);
+  background: rgba(20, 54, 74, 0.78);
+  color: #f6f1df;
+  box-shadow: 0 0.3rem 0.8rem rgba(20, 54, 74, 0.18);
+}
+
 .shard-stage {
   position: absolute;
   inset: 0;
@@ -1164,6 +1316,62 @@ a {
 .shard-stage.is-merging .taste-shard.selected::after {
   opacity: 0;
   animation: none;
+}
+
+/* ── 중·하카테고리 섬 군도 스테이지 ── */
+.island-scatter-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* 패널 너비보다 조금 작게만 left padding → 가로 공간 최대 활용 */
+  padding: 5.5rem 2.5rem 7rem min(20rem, 28vw);
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem 2.2rem;
+  align-content: center;
+}
+
+/* flex 흐름 안에서 position 해제 */
+.island-scatter-stage .taste-shard {
+  position: relative;
+  left: auto;
+  top: auto;
+  flex-shrink: 0;
+  width: clamp(7.5rem, 9.2vw, 9.5rem);
+  min-height: clamp(5.5rem, 7vw, 7.5rem);
+}
+
+/* 중카테고리(step1): 섬을 크게 해서 행당 ~4개 → 3줄 */
+.island-scatter-step1 {
+  gap: 4rem 3.4rem;
+  align-content: center;
+  padding-left: min(26rem, 34vw);
+}
+.island-scatter-step1 .taste-shard {
+  width: clamp(10.5rem, 13.5vw, 13rem);
+  min-height: clamp(7.5rem, 9.5vw, 9.5rem);
+}
+
+/* 하카테고리(step2): 기본 크기 유지하되 간격 조금 더 넓게 */
+.island-scatter-step2 {
+  gap: 3.2rem 2.8rem;
+}
+
+/* 머지 중에는 선택된 섬만 선명하게 */
+.island-scatter-stage.is-merging .taste-shard:not(.selected) {
+  opacity: 0.22;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+
+@media (max-width: 980px) {
+  .island-scatter-stage {
+    padding: 16rem 1rem 7rem 1rem;
+    gap: 2.5rem 1.5rem;
+    align-content: flex-start;
+    overflow-y: auto;
+  }
 }
 
 .merge-core {
@@ -1851,7 +2059,8 @@ a {
   bottom: 1rem;
   display: grid;
   gap: 0.55rem;
-  width: min(22rem, calc(100vw - 2rem));
+  width: min(26rem, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 0.9rem;
@@ -1859,29 +2068,54 @@ a {
   backdrop-filter: blur(16px);
 }
 
-.world-legend button {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.25rem 0.8rem;
+.world-legend .eyebrow {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 0.45rem;
+  line-height: 1.35;
+  word-break: keep-all;
+  white-space: normal;
+  text-transform: none;
+}
+
+.world-legend button {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  padding: 0.7rem;
+  padding: 0.7rem 0.75rem;
   background: rgba(255, 255, 255, 0.06);
   color: var(--text);
   text-align: left;
   cursor: pointer;
+  min-width: 0;
 }
 
-.world-legend span {
+.world-legend-nickname {
+  display: block;
+  font-weight: 900;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.world-legend-preview {
+  display: block;
   color: var(--muted);
   font-size: 0.78rem;
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .world-legend meter {
-  grid-column: 1 / -1;
   width: 100%;
   height: 0.42rem;
+  flex-shrink: 0;
 }
 
 .detail-panel,
@@ -2485,6 +2719,10 @@ a {
 @media (max-width: 980px) {
   body {
     overflow: auto;
+  }
+
+  .chip-step-stage {
+    padding: 17rem 1rem 8rem 1rem;
   }
 
   .login-screen,

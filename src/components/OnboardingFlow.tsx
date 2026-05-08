@@ -36,6 +36,17 @@ function toggleValue(list: string[], value: string) {
   return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
 }
 
+/** 중카테고리(step1): 큰 Y 지터 → 행·열 정렬감을 강하게 깸 */
+const MIDDLE_JITTER = [0, 4.2, -3.0, 1.8, -1.8, 4.8, 2.2, 3.2, 3.6, -0.8, 5.2];
+
+/** 하카테고리(step2): 작은 Y 지터 (항목이 많으므로 절제) */
+const SUB_JITTER = [0, 1.8, -1.4, 2.6, -0.8, 2.0, 1.0, -2.0, 2.2, -0.4,
+                    1.4, -2.2, 0.6, 2.4, -1.6, 1.2, -1.0, 2.8, -0.2, 1.6];
+
+/** 인덱스별 회전(deg) — ±로 다양하게 */
+const ROTATIONS = [-2.2, 2.8, -1.6, 3.4, -3.0, 1.8, -3.8, 2.2, -1.0, 3.2,
+                   -2.5, 1.5, -3.2, 2.6, -1.8, 3.8, -2.0, 3.0, -1.2, 2.4];
+
 export function OnboardingFlow() {
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
   const [stepIndex, setStepIndex] = useState(0);
@@ -63,7 +74,13 @@ export function OnboardingFlow() {
   const options = stepIndex === 0 ? mainCategories : stepIndex === 1 ? middleOptions : subOptions;
   const activeSelection =
     stepIndex === 0 ? selectedMain : stepIndex === 1 ? selectedMiddle : selectedSub;
-  const canProceed = activeSelection.length > 0;
+  // 스텝 1에서도 추천칩(서브)만 골라도 진행 가능하도록
+  const canProceed =
+    stepIndex === 1
+      ? selectedMiddle.length > 0
+      : stepIndex === 2
+        ? selectedSub.length > 0
+        : selectedMain.length > 0;
 
   const mergeGlbVariant: OnboardingMergeGlbVariant =
     stepIndex === 0 ? "main" : stepIndex === 1 ? "middle" : "sub";
@@ -84,8 +101,16 @@ export function OnboardingFlow() {
     }
 
     if (stepIndex === 1) {
-      setSelectedMiddle((current) => toggleValue(current, value));
-      setSelectedSub([]);
+      setSelectedMiddle((current) => {
+        const isRemoving = current.includes(value);
+        const next = toggleValue(current, value);
+        if (isRemoving) {
+          // 제거된 미들에 속한 서브만 정리
+          const subsOfRemoved = subCategoriesByMiddle[value] ?? [];
+          setSelectedSub((subs) => subs.filter((s) => !subsOfRemoved.includes(s)));
+        }
+        return next;
+      });
       return;
     }
 
@@ -181,80 +206,155 @@ export function OnboardingFlow() {
         </div>
       </section>
 
-      <div className={`route-to-center ${activeSelection.length > 0 ? "has-selection" : ""}`} />
-      <section className={`shard-stage ${isMerging ? "is-merging" : ""}`}>
-        <AnimatePresence mode="popLayout">
-          {options.map((option, index) => {
-            const selected = activeSelection.includes(option);
+      <div className={`route-to-center ${stepIndex === 0 && activeSelection.length > 0 ? "has-selection" : ""}`} />
 
-            return (
-              <motion.button
-                className={`taste-shard shard-${index % 6} map-position-${index % 9} ${
-                  selected ? "selected" : ""
-                }`}
-                key={option}
-                layout={!isMerging}
-                style={{ "--i": index } as CSSProperties}
-                onClick={() => handleToggle(option)}
-                initial={{ opacity: 0, scale: 0.72, y: 34, rotate: index % 2 ? 2 : -2 }}
-                animate={{
-                  opacity: 1,
-                  scale: selected && isMerging ? 0.58 : selected ? 1.04 : 1,
-                  rotate: selected && isMerging ? 0 : index % 2 ? 1.5 : -1.5,
-                  /* 로딩(merge-core)과 동일: 스테이지 정중앙 */
-                  x: selected && isMerging ? "-50%" : undefined,
-                  y: selected && isMerging ? "-50%" : undefined
-                }}
-                exit={{ opacity: 0, scale: 0.7 }}
-                transition={{
-                  duration: 0.65,
-                  delay: index * 0.025,
-                  layout: { duration: 0.92, ease: [0.22, 1, 0.36, 1] }
-                }}
+      {/* 스텝 0: 섬 카드(기존 shard-stage) */}
+      {stepIndex === 0 && (
+        <section className={`shard-stage ${isMerging ? "is-merging" : ""}`}>
+          <AnimatePresence mode="popLayout">
+            {options.map((option, index) => {
+              const selected = activeSelection.includes(option);
+              return (
+                <motion.button
+                  className={`taste-shard shard-${index % 6} map-position-${index % 9} ${
+                    selected ? "selected" : ""
+                  }`}
+                  key={option}
+                  layout={!isMerging}
+                  style={{ "--i": index } as CSSProperties}
+                  onClick={() => handleToggle(option)}
+                  initial={{ opacity: 0, scale: 0.72, y: 34, rotate: index % 2 ? 2 : -2 }}
+                  animate={{
+                    opacity: 1,
+                    scale: selected && isMerging ? 0.58 : selected ? 1.04 : 1,
+                    rotate: selected && isMerging ? 0 : index % 2 ? 1.5 : -1.5,
+                    x: selected && isMerging ? "-50%" : undefined,
+                    y: selected && isMerging ? "-50%" : undefined
+                  }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{
+                    duration: 0.65,
+                    delay: index * 0.025,
+                    layout: { duration: 0.92, ease: [0.22, 1, 0.36, 1] }
+                  }}
+                >
+                  <OnboardingCategoryIsland
+                    label={option}
+                    index={index}
+                    selected={selected}
+                    merging={isMerging}
+                  />
+                  <i className="terrain-line terrain-one" />
+                  <i className="terrain-line terrain-two" />
+                  <span>{option}</span>
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
+          <AnimatePresence>
+            {isMerging && (
+              <motion.div
+                className="merge-core"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+                role="status"
+                aria-live="polite"
+                aria-label="취향 지형 합성 중"
               >
-                <OnboardingCategoryIsland
-                  label={option}
-                  index={index}
-                  selected={selected}
-                  merging={isMerging}
-                />
-                <i className="terrain-line terrain-one" />
-                <i className="terrain-line terrain-two" />
-                <span>{option}</span>
-              </motion.button>
-            );
-          })}
-        </AnimatePresence>
-        <AnimatePresence>
-          {isMerging && (
-            <motion.div
-              className="merge-core"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
-              role="status"
-              aria-live="polite"
-              aria-label="취향 지형 합성 중"
-            >
-              <div className="merge-core-canvas-wrap" aria-hidden="true">
-                <OnboardingMergeCanvas
-                  key={`${mergeGlbVariant}-${stepIndex}`}
-                  variant={mergeGlbVariant}
-                />
-              </div>
-              <div className="merge-core-inner">
-                <span className="merge-core-eyebrow">Topography synthesis</span>
-                <p className="merge-core-headline">새 지형을 그리는 중</p>
-                <p className="merge-core-detail">{mergeDetailCopy}</p>
-                <div className="merge-core-meter" aria-hidden>
-                  <span className="merge-core-meter-fill" />
+                <div className="merge-core-canvas-wrap" aria-hidden="true">
+                  <OnboardingMergeCanvas
+                    key={`${mergeGlbVariant}-${stepIndex}`}
+                    variant={mergeGlbVariant}
+                  />
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </section>
+                <div className="merge-core-inner">
+                  <span className="merge-core-eyebrow">Topography synthesis</span>
+                  <p className="merge-core-headline">새 지형을 그리는 중</p>
+                  <p className="merge-core-detail">{mergeDetailCopy}</p>
+                  <div className="merge-core-meter" aria-hidden>
+                    <span className="merge-core-meter-fill" />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </section>
+      )}
+
+      {/* 스텝 1·2: 섬 군도 (flex-wrap + 행 지터로 자연스럽게) */}
+      {(stepIndex === 1 || stepIndex === 2) && (
+        <>
+          <section className={`island-scatter-stage island-scatter-step${stepIndex} ${isMerging ? "is-merging" : ""}`}>
+            <AnimatePresence mode="popLayout">
+              {options.map((option, index) => {
+                const selected = activeSelection.includes(option);
+                const jitterArr = stepIndex === 1 ? MIDDLE_JITTER : SUB_JITTER;
+                const jitter = jitterArr[index % jitterArr.length];
+                const rot = ROTATIONS[index % ROTATIONS.length];
+                return (
+                  <motion.button
+                    className={`taste-shard shard-${index % 6} ${selected ? "selected" : ""}`}
+                    key={option}
+                    style={{ "--i": index } as CSSProperties}
+                    onClick={() => handleToggle(option)}
+                    initial={{ opacity: 0, scale: 0.68, y: jitter * 4 }}
+                    animate={{
+                      opacity: 1,
+                      scale: selected ? 1.05 : 1,
+                      y: `${jitter}rem`,
+                      rotate: rot,
+                    }}
+                    exit={{ opacity: 0, scale: 0.68 }}
+                    transition={{ duration: 0.48, delay: index * 0.03 }}
+                    whileTap={{ scale: 0.92 }}
+                  >
+                    <OnboardingCategoryIsland
+                      label={option}
+                      index={index}
+                      selected={selected}
+                      merging={false}
+                    />
+                    <i className="terrain-line terrain-one" />
+                    <i className="terrain-line terrain-two" />
+                    <span>{option}</span>
+                  </motion.button>
+                );
+              })}
+            </AnimatePresence>
+          </section>
+          <AnimatePresence>
+            {isMerging && (
+              <motion.div
+                className="merge-core"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+                role="status"
+                aria-live="polite"
+                aria-label="취향 지형 합성 중"
+              >
+                <div className="merge-core-canvas-wrap" aria-hidden="true">
+                  <OnboardingMergeCanvas
+                    key={`${mergeGlbVariant}-${stepIndex}`}
+                    variant={mergeGlbVariant}
+                  />
+                </div>
+                <div className="merge-core-inner">
+                  <span className="merge-core-eyebrow">Topography synthesis</span>
+                  <p className="merge-core-headline">새 지형을 그리는 중</p>
+                  <p className="merge-core-detail">{mergeDetailCopy}</p>
+                  <div className="merge-core-meter" aria-hidden>
+                    <span className="merge-core-meter-fill" />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
 
       <footer className="floating-footer">
         <button className="secondary-button" onClick={() => setStepIndex((index) => Math.max(0, index - 1))}>

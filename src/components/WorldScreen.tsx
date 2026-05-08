@@ -1,10 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Compass, Database, Home, Map, RotateCcw, Ship, UploadCloud } from "lucide-react";
+import { Compass, Home, Map, RotateCcw, Ship, Telescope, UploadCloud } from "lucide-react";
 import { CURRENT_USER_ID, islandDistanceLabel, similarityScore } from "../data/tasteData";
 import { useAppStore } from "../store/useAppStore";
 import { IslandDetailPanel } from "./IslandDetailPanel";
 import { IslandWorld } from "./IslandWorld";
-import { MyIslandLevelBox } from "./MyIslandLevelBox";
 import { MyIslandPanel } from "./MyIslandPanel";
 
 export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
@@ -20,7 +19,8 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
   const currentUser = users.find((user) => user.id === CURRENT_USER_ID)!;
   const selectedUser = users.find((user) => user.id === selectedUserId) ?? null;
   const showDetail = selectedUser && selectedUser.id !== CURRENT_USER_ID && mode === "world";
-  const nearestUsers = users
+  /** 유사도가 낮은 순(먼 섬부터) 최대 3명 — 알고리즘 밖 콘텐츠 탐색용 */
+  const farthestIslandPreviews = users
     .filter((user) => user.id !== CURRENT_USER_ID)
     .map((user) => ({
       user,
@@ -28,7 +28,7 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
       label: islandDistanceLabel(currentUser, user),
       media: mediaItems.find((item) => item.userId === user.id) ?? null
     }))
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => a.score - b.score)
     .slice(0, 3);
 
   const handleSelectIsland = (userId: string | null) => {
@@ -61,7 +61,6 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
         onBoatComplete={clearBoatTrip}
       />
 
-      <MyIslandLevelBox />
 
       <header className="world-topbar">
         <button className="brand-pill" onClick={() => goTo("world")}>
@@ -90,16 +89,23 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
 
       <aside className="world-legend">
         <span className="eyebrow">
-          <Database size={15} />
-          취향 거리 시각화
+          <Telescope size={15} />
+          나랑 먼 섬의 컨텐츠 살펴보기
         </span>
-        {nearestUsers.map(({ user, score, label, media }) => (
-          <button key={user.id} onClick={() => handleSelectIsland(user.id)}>
-            <strong>{user.nickname}</strong>
-            <span>
+        {farthestIslandPreviews.map(({ user, score, label, media }) => (
+          <button key={user.id} type="button" onClick={() => handleSelectIsland(user.id)}>
+            <strong className="world-legend-nickname" title={user.nickname}>
+              {user.nickname}
+            </strong>
+            <span className="world-legend-preview">
               {media ? `${media.platform} · ${media.title}` : label}
             </span>
-            <meter min={0} max={1} value={score} />
+            <meter
+              min={0}
+              max={1}
+              value={1 - score}
+              title={`내 취향과의 거리감(${islandDistanceLabel(currentUser, user)})`}
+            />
           </button>
         ))}
       </aside>
@@ -127,7 +133,10 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
       {mode === "world" && !showDetail && (
         <section className="world-hint">
           <strong>섬을 클릭해 취향을 탐험하세요.</strong>
-          <span>가까운 섬일수록 키워드 유사도가 높고, 먼 섬일수록 알고리즘 바깥의 발견입니다.</span>
+          <span>
+            지도에서는 가까운 섬일수록 취향이 비슷합니다. 좌측 패널은 반대로, 나와 가장 먼 섬에서
+            흘러든 콘텐츠만 골라 보여 줍니다.
+          </span>
         </section>
       )}
     </main>

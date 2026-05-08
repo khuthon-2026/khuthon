@@ -4,8 +4,8 @@ import {
   deriveIslandIdentity,
   growthStateFromLevel,
   growthThresholds,
+  layoutIslandsByTasteDistance,
   levelFromLikes,
-  randomizeIslandPositions,
   sampleMedia,
   sampleUsers
 } from "../data/tasteData";
@@ -13,6 +13,7 @@ import type {
   BoatTrip,
   BottleLetter,
   CategorySelection,
+  GrowthState,
   IslandLevel,
   Like,
   MediaItem,
@@ -61,7 +62,7 @@ const initialLetters: BottleLetter[] = [
 
 export const useAppStore = create<AppState>((set, get) => ({
   screen: "login",
-  users: randomizeIslandPositions(sampleUsers),
+  users: layoutIslandsByTasteDistance(sampleUsers),
   mediaItems: sampleMedia,
   likes: [],
   letters: initialLetters,
@@ -86,27 +87,31 @@ export const useAppStore = create<AppState>((set, get) => ({
       subCategoriesValue
     );
 
-    set((state) => ({
-      screen: "keywords",
-      selection: {
-        userId: CURRENT_USER_ID,
-        mainCategories: mainCategoriesValue,
-        middleCategories: middleCategoriesValue,
-        subCategories: subCategoriesValue
-      },
-      users: state.users.map((user) =>
+    set((state) => {
+      const nextUsers = state.users.map((user) =>
         user.id === CURRENT_USER_ID
           ? {
               ...user,
               ...identity,
-              islandLevel: 1,
+              islandLevel: 1 as IslandLevel,
               likes: 1,
               affinityPoints: 1,
-              growthState: "seed"
+              growthState: "seed" as GrowthState
             }
           : user
-      )
-    }));
+      );
+
+      return {
+        screen: "keywords",
+        selection: {
+          userId: CURRENT_USER_ID,
+          mainCategories: mainCategoriesValue,
+          middleCategories: middleCategoriesValue,
+          subCategories: subCategoriesValue
+        },
+        users: layoutIslandsByTasteDistance(nextUsers)
+      };
+    });
   },
   addUploadedMedia: (items) => {
     const keptItems = items.filter((item) => item.status === "kept");
