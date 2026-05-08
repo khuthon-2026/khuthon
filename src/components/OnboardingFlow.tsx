@@ -8,6 +8,7 @@ import {
   subCategoriesByMiddle
 } from "../data/tasteData";
 import { useAppStore } from "../store/useAppStore";
+import { OnboardingCategoryIsland } from "./OnboardingCategoryIsland";
 
 const steps = [
   {
@@ -196,6 +197,12 @@ export function OnboardingFlow() {
                   layout: { duration: 0.92, ease: [0.22, 1, 0.36, 1] }
                 }}
               >
+                <OnboardingCategoryIsland
+                  label={option}
+                  index={index}
+                  selected={selected}
+                  merging={isMerging}
+                />
                 <i className="terrain-line terrain-one" />
                 <i className="terrain-line terrain-two" />
                 <span>{option}</span>

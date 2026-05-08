@@ -18,7 +18,7 @@ interface IslandModelProps {
   isCurrent: boolean;
   selected: boolean;
   hasBottle: boolean;
-  leveledUp: boolean;
+  leveledUp?: boolean;
   onSelect: (userId: string) => void;
 }
 
@@ -393,7 +393,7 @@ export function IslandModel({
   isCurrent,
   selected,
   hasBottle,
-  leveledUp,
+  leveledUp = false,
   onSelect
 }: IslandModelProps) {
   const [hovered, setHovered] = useState(false);

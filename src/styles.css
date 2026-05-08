@@ -803,8 +803,9 @@ a {
 .taste-shard {
   display: grid;
   place-items: center;
-  width: clamp(8.2rem, 12vw, 11rem);
-  min-height: clamp(5.6rem, 8vw, 7.2rem);
+  z-index: 2;
+  width: clamp(9.2rem, 13vw, 12.4rem);
+  min-height: clamp(7.2rem, 10vw, 9.2rem);
   border: 0;
   border-radius: 0;
   padding: 0;
@@ -814,6 +815,7 @@ a {
   font-weight: 820;
   box-shadow: none;
   filter: none;
+  overflow: visible;
   transition:
     left 900ms cubic-bezier(0.22, 1, 0.36, 1),
     top 900ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -850,8 +852,10 @@ a {
 }
 
 .taste-shard span {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 0.2rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -866,6 +870,7 @@ a {
   font-size: 0.88rem;
   line-height: 1.2;
   text-align: center;
+  transform: translate(-50%, -70%);
   backdrop-filter: blur(8px);
 }
 
@@ -877,6 +882,43 @@ a {
   border-top: 1px solid rgba(44, 88, 75, 0.23);
   border-radius: 50%;
   pointer-events: none;
+}
+
+.category-island-3d {
+  position: absolute;
+  z-index: 2;
+  inset: 0.55rem -0.55rem -0.35rem;
+  pointer-events: none;
+}
+
+.category-island-3d canvas {
+  pointer-events: none;
+}
+
+.category-island-3d-fallback::before,
+.category-island-3d-fallback::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.category-island-3d-fallback::before {
+  inset: 12% 13% 28%;
+  border-radius: 47% 53% 59% 41% / 48% 45% 55% 52%;
+  background:
+    radial-gradient(circle at 33% 24%, rgba(255, 255, 255, 0.42), transparent 18%),
+    linear-gradient(145deg, #e3d9a1, #8fb785 56%, #5b8e83);
+  box-shadow:
+    inset 0 -1rem 1.3rem rgba(39, 83, 75, 0.18),
+    0 1.4rem 1rem rgba(25, 60, 71, 0.2);
+  clip-path: polygon(7% 43%, 17% 18%, 45% 8%, 74% 15%, 92% 39%, 86% 68%, 63% 88%, 31% 82%, 11% 64%);
+}
+
+.category-island-3d-fallback::after {
+  inset: 50% 26% 11%;
+  border-radius: 36% 44% 52% 48%;
+  background: linear-gradient(180deg, rgba(98, 116, 92, 0.9), rgba(70, 86, 82, 0.72));
+  clip-path: polygon(16% 0, 84% 0, 74% 62%, 53% 88%, 30% 62%);
 }
 
 .terrain-one {
@@ -967,12 +1009,33 @@ a {
   clip-path: polygon(9% 49%, 19% 22%, 48% 7%, 76% 19%, 90% 44%, 85% 69%, 58% 90%, 28% 82%, 8% 63%);
 }
 
+.taste-shard::before,
+.shard-0::before,
+.shard-1::before,
+.shard-2::before,
+.shard-3::before,
+.shard-4::before,
+.shard-5::before {
+  inset: auto 9% 0.45rem;
+  height: 1.55rem;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(25, 60, 71, 0.28), rgba(25, 60, 71, 0.08) 46%, transparent 72%);
+  box-shadow: none;
+  clip-path: none;
+  filter: blur(0.5px);
+}
+
+.terrain-line {
+  display: none;
+}
+
 .taste-shard:hover {
   filter: none;
 }
 
 .taste-shard:hover::before {
-  filter: drop-shadow(0 1.15rem 1.1rem rgba(25, 60, 71, 0.28));
+  filter: blur(0.5px);
 }
 
 .taste-shard.selected {
@@ -981,8 +1044,7 @@ a {
 
 .taste-shard.selected::before {
   border-color: rgba(36, 87, 78, 0.34);
-  box-shadow:
-    inset 0 -1rem 1.5rem rgba(39, 83, 75, 0.18);
+  box-shadow: none;
 }
 
 .taste-shard.selected::after {
