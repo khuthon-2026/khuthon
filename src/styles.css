@@ -1309,6 +1309,10 @@ a {
   padding: 3rem clamp(1rem, 5vw, 4rem) 7rem;
 }
 
+.upload-screen .floating-footer {
+  bottom: 12.5rem;
+}
+
 .upload-header {
   max-width: 58rem;
 }
