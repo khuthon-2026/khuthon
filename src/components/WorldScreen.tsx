@@ -66,7 +66,7 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
       <header className="world-topbar">
         <button className="brand-pill" onClick={() => goTo("world")}>
           <Compass size={18} />
-          니 섬 쩔더라
+          섬 넘네
         </button>
         <nav>
           <button className={mode === "world" ? "active" : ""} onClick={() => goTo("world")}>

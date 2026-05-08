@@ -278,7 +278,7 @@ try {
     throw new Error(`Initial page failed: ${JSON.stringify(initial)}\n${errors.join("\n")}`);
   }
 
-  await assertText(send, "니 섬 쩔더라");
+  await assertText(send, "섬 넘네");
   await screenshot(send, screenshots.login);
 
   await click(send, "데모 로그인", 800);
