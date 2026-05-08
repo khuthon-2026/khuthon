@@ -517,15 +517,6 @@ export function IslandModel({
                 ]}
               />
 
-              <group position={[0, surfaceY, 0]} scale={0.92 + user.islandLevel * 0.06}>
-                <IslandDecorations
-                  type={user.islandType}
-                  level={user.islandLevel}
-                  palette={palette}
-                  seed={seed}
-                />
-              </group>
-
               {hasBottle && (
                 <group position={[-1.08, surfaceY + 0.12, 0.66]} rotation-z={0.6}>
                   <mesh>
