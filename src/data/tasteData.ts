@@ -263,6 +263,57 @@ export const sampleUsers: User[] = [
   }
 ];
 
+function randomBetween(min: number, max: number) {
+  return min + Math.random() * (max - min);
+}
+
+function distanceSquared(ax: number, ay: number, bx: number, by: number) {
+  const dx = ax - bx;
+  const dy = ay - by;
+  return dx * dx + dy * dy;
+}
+
+export function randomizeIslandPositions(users: User[]) {
+  const minDistance = 4.2;
+  const minDistanceSq = minDistance * minDistance;
+  const minRadius = 2.0;
+  const maxRadius = 10.0;
+
+  const placed: Array<{ id: string; x: number; y: number }> = [];
+
+  return users.map((user, index) => {
+    if (index === 0) {
+      const x = 0;
+      const y = 0;
+      placed.push({ id: user.id, x, y });
+      return { ...user, islandPositionX: x, islandPositionY: y };
+    }
+
+    let x = user.islandPositionX;
+    let y = user.islandPositionY;
+
+    for (let attempt = 0; attempt < 250; attempt += 1) {
+      const angle = randomBetween(0, Math.PI * 2);
+      const radius = randomBetween(minRadius, maxRadius);
+      const candidateX = Math.cos(angle) * radius;
+      const candidateY = Math.sin(angle) * radius;
+
+      const ok = placed.every(
+        (prev) => distanceSquared(prev.x, prev.y, candidateX, candidateY) >= minDistanceSq
+      );
+
+      if (ok) {
+        x = candidateX;
+        y = candidateY;
+        break;
+      }
+    }
+
+    placed.push({ id: user.id, x, y });
+    return { ...user, islandPositionX: x, islandPositionY: y };
+  });
+}
+
 export const sampleMedia: MediaItem[] = [
   {
     id: "me-1",

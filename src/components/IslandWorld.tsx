@@ -1,8 +1,8 @@
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Html, Line, OrbitControls, Sparkles, Stars } from "@react-three/drei";
-import type { Group, Mesh } from "three";
-import { Vector3 } from "three";
+import { Html, Line, OrbitControls } from "@react-three/drei";
+import type { Group, Mesh, ShaderMaterial } from "three";
+import { BackSide, Vector3 } from "three";
 import { CURRENT_USER_ID, similarityScore } from "../data/tasteData";
 import type { BoatTrip, BottleLetter, User } from "../types";
 import { IslandModel } from "./IslandModel";
@@ -12,6 +12,7 @@ interface IslandWorldProps {
   selectedUserId: string | null;
   activeBoatTrip: BoatTrip | null;
   letters: BottleLetter[];
+  recentlyLeveledUpId: string | null;
   onSelectIsland: (userId: string | null) => void;
   onBoatComplete: () => void;
 }
@@ -28,8 +29,14 @@ function OceanSurface() {
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} receiveShadow>
-        <circleGeometry args={[60, 128]} />
-        <meshStandardMaterial color="#052f3a" roughness={0.78} metalness={0.18} />
+        <circleGeometry args={[160, 128]} />
+        <meshStandardMaterial
+          color="#0b5a6a"
+          roughness={0.95}
+          metalness={0.02}
+          transparent
+          opacity={0.98}
+        />
       </mesh>
       <mesh ref={ringRef} rotation-x={-Math.PI / 2} position={[0, 0.015, 0]}>
         <ringGeometry args={[7, 7.03, 120]} />
@@ -160,11 +167,74 @@ function SimilarityLines({ users }: { users: User[] }) {
   );
 }
 
+function SeaBackdrop() {
+  const materialRef = useRef<ShaderMaterial>(null);
+
+  return (
+    <mesh scale={420}>
+      <sphereGeometry args={[1, 48, 48]} />
+      <shaderMaterial
+        ref={materialRef}
+        side={BackSide}
+        uniforms={{
+          uSkyTop: { value: new Vector3(0.66, 0.92, 0.98) },
+          uSkyNear: { value: new Vector3(0.40, 0.82, 0.96) },
+          uHorizon: { value: new Vector3(0.78, 0.96, 0.98) },
+          uSeaNear: { value: new Vector3(0.05, 0.46, 0.58) },
+          uSeaDeep: { value: new Vector3(0.02, 0.14, 0.20) }
+        }}
+        vertexShader={`
+          varying vec3 vWorldDir;
+          void main() {
+            vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+            vWorldDir = normalize(worldPosition.xyz - cameraPosition);
+            gl_Position = projectionMatrix * viewMatrix * worldPosition;
+          }
+        `}
+        fragmentShader={`
+          precision highp float;
+          varying vec3 vWorldDir;
+          uniform vec3 uSkyTop;
+          uniform vec3 uSkyNear;
+          uniform vec3 uHorizon;
+          uniform vec3 uSeaNear;
+          uniform vec3 uSeaDeep;
+
+          void main() {
+            // y: -1(아래) ~ +1(위)
+            float y = clamp(vWorldDir.y * 0.5 + 0.5, 0.0, 1.0);
+
+            // 0.0(아래)~1.0(위)에서 수평선 위치
+            const float horizonY = 0.58;
+
+            // 하늘: 위쪽은 밝고, 수평선 근처는 살짝 하얀 안개
+            float skyT = smoothstep(horizonY, 1.0, y);
+            vec3 sky = mix(uSkyNear, uSkyTop, skyT);
+            float horizonHaze = smoothstep(horizonY - 0.06, horizonY + 0.05, y) * (1.0 - smoothstep(horizonY + 0.05, horizonY + 0.16, y));
+            sky = mix(sky, uHorizon, horizonHaze * 0.65);
+
+            // 바다: 수평선 근처가 더 밝고 아래로 갈수록 깊은 톤
+            float seaT = smoothstep(0.0, horizonY, y);
+            vec3 sea = mix(uSeaDeep, uSeaNear, seaT);
+
+            // 최종: 수평선 기준으로 부드럽게 블렌딩
+            float mixT = smoothstep(horizonY - 0.01, horizonY + 0.06, y);
+            vec3 color = mix(sea, sky, mixT);
+
+            gl_FragColor = vec4(color, 1.0);
+          }
+        `}
+      />
+    </mesh>
+  );
+}
+
 export function IslandWorld({
   users,
   selectedUserId,
   activeBoatTrip,
   letters,
+  recentlyLeveledUpId,
   onSelectIsland,
   onBoatComplete
 }: IslandWorldProps) {
@@ -179,26 +249,27 @@ export function IslandWorld({
       camera={{ position: [0, 8.4, 12.5], fov: 45 }}
       onPointerMissed={() => onSelectIsland(null)}
     >
-      <color attach="background" args={["#07111f"]} />
-      <fog attach="fog" args={["#07111f", 12, 34]} />
-      <ambientLight intensity={1.15} />
+      <color attach="background" args={["#87dff5"]} />
+      <fog attach="fog" args={["#0c3f4f", 18, 46]} />
+      <SeaBackdrop />
+      <ambientLight intensity={1.2} />
       <directionalLight position={[5, 9, 4]} intensity={2.4} castShadow shadow-mapSize={[2048, 2048]} />
       <pointLight position={[-6, 3.2, -2]} color="#f9a8d4" intensity={16} />
       <pointLight position={[6, 2.8, 6]} color="#67e8f9" intensity={12} />
-      <Stars radius={80} depth={20} count={600} factor={2.6} saturation={0.2} fade speed={0.18} />
-      <Sparkles count={95} scale={18} size={1.8} speed={0.22} color="#fef3c7" />
       <OceanSurface />
       <SimilarityLines users={users} />
       <Suspense fallback={null}>
         {users.map((user) => (
-          <IslandModel
-            key={user.id}
-            user={user}
-            isCurrent={user.id === CURRENT_USER_ID}
-            selected={selectedUserId === user.id}
-            hasBottle={user.id === CURRENT_USER_ID && unreadBottleOnMine}
-            onSelect={onSelectIsland}
-          />
+          <group key={user.id}>
+            <IslandModel
+              user={user}
+              isCurrent={user.id === CURRENT_USER_ID}
+              selected={selectedUserId === user.id}
+              hasBottle={user.id === CURRENT_USER_ID && unreadBottleOnMine}
+              leveledUp={user.id === recentlyLeveledUpId}
+              onSelect={onSelectIsland}
+            />
+          </group>
         ))}
       </Suspense>
       {activeBoatTrip && (

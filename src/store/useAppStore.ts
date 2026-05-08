@@ -3,7 +3,9 @@ import {
   CURRENT_USER_ID,
   deriveIslandIdentity,
   growthStateFromLevel,
+  growthThresholds,
   levelFromLikes,
+  randomizeIslandPositions,
   sampleMedia,
   sampleUsers
 } from "../data/tasteData";
@@ -11,6 +13,7 @@ import type {
   BoatTrip,
   BottleLetter,
   CategorySelection,
+  IslandLevel,
   Like,
   MediaItem,
   Screen,
@@ -41,6 +44,7 @@ interface AppState {
   clearLevelUp: () => void;
   sendBottleLetter: (toUserId: string, message: string, attachedMediaIds: string[]) => void;
   openBottleLetter: (letterId: string) => void;
+  setMyIslandLevel: (level: IslandLevel) => void;
 }
 
 const initialLetters: BottleLetter[] = [
@@ -57,7 +61,7 @@ const initialLetters: BottleLetter[] = [
 
 export const useAppStore = create<AppState>((set, get) => ({
   screen: "login",
-  users: sampleUsers,
+  users: randomizeIslandPositions(sampleUsers),
   mediaItems: sampleMedia,
   likes: [],
   letters: initialLetters,
@@ -177,6 +181,13 @@ export const useAppStore = create<AppState>((set, get) => ({
         recentlyLeveledUpId: leveledUpTargetId
       };
     });
+
+    // 레벨업 연출은 짧게 보여주고 자동으로 종료
+    window.setTimeout(() => {
+      if (get().recentlyLeveledUpId) {
+        get().clearLevelUp();
+      }
+    }, 2200);
   },
   clearBoatTrip: () => set({ activeBoatTrip: null, pendingLikeTargetId: null }),
   clearLevelUp: () => set({ recentlyLeveledUpId: null }),
@@ -219,5 +230,30 @@ export const useAppStore = create<AppState>((set, get) => ({
       selectedUserId: letter?.fromUserId ?? state.selectedUserId,
       screen: "world"
     }));
+  }
+  ,
+  setMyIslandLevel: (level) => {
+    const threshold = growthThresholds.find((t) => t.level === level);
+    const likes = threshold?.minLikes ?? 0;
+
+    set((state) => ({
+      users: state.users.map((user) =>
+        user.id === CURRENT_USER_ID
+          ? {
+              ...user,
+              islandLevel: level,
+              likes,
+              growthState: growthStateFromLevel(level)
+            }
+          : user
+      ),
+      recentlyLeveledUpId: CURRENT_USER_ID
+    }));
+
+    window.setTimeout(() => {
+      if (get().recentlyLeveledUpId === CURRENT_USER_ID) {
+        get().clearLevelUp();
+      }
+    }, 2200);
   }
 }));

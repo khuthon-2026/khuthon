@@ -82,6 +82,7 @@ export function KeywordReveal() {
                 isCurrent
                 selected
                 hasBottle={false}
+                leveledUp={false}
                 onSelect={() => undefined}
               />
             </Float>

@@ -1890,6 +1890,45 @@ a {
   user-select: none;
 }
 
+.world-island-label {
+  display: grid;
+  justify-items: center;
+  gap: 0.34rem;
+}
+
+.world-keyword-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 12rem;
+}
+
+.world-keyword-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  border-radius: 999px;
+  padding: 0.3rem 0.52rem;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #06101d;
+  font-size: 0.66rem;
+  font-weight: 950;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.world-keyword-emoji {
+  font-size: 0.72rem;
+  transform: translateY(0.5px);
+}
+
+.world-keyword-text {
+  letter-spacing: -0.01em;
+}
+
 .world-keyword-label {
   border-radius: 999px;
   padding: 0.34rem 0.56rem;
@@ -1948,6 +1987,75 @@ a {
   50% {
     transform: translate(3rem, -1.3rem) rotate(-8deg);
   }
+}
+
+.levelup-box {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 20;
+  width: min(18rem, calc(100vw - 2rem));
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(7, 17, 31, 0.72);
+  box-shadow: 0 1rem 2.6rem rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(10px);
+  color: #f8fafc;
+  user-select: none;
+}
+
+.levelup-box__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.85rem 0.55rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.levelup-box__header strong {
+  font-size: 0.82rem;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.levelup-box__body {
+  padding: 0.7rem 0.85rem 0.85rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.levelup-box__meta {
+  font-size: 0.74rem;
+  color: rgba(248, 250, 252, 0.8);
+}
+
+.levelup-box__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.levelup-box__buttons button {
+  border-radius: 999px;
+  padding: 0.42rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  font-size: 0.72rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.levelup-box__buttons button:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.levelup-box__buttons button.active {
+  border-color: rgba(250, 204, 21, 0.5);
+  background: rgba(250, 204, 21, 0.18);
+  color: #fff7ed;
 }
 
 @media (max-width: 980px) {

@@ -4,6 +4,7 @@ import { CURRENT_USER_ID, islandDistanceLabel, similarityScore } from "../data/t
 import { useAppStore } from "../store/useAppStore";
 import { IslandDetailPanel } from "./IslandDetailPanel";
 import { IslandWorld } from "./IslandWorld";
+import { MyIslandLevelBox } from "./MyIslandLevelBox";
 import { MyIslandPanel } from "./MyIslandPanel";
 
 export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
@@ -11,6 +12,7 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
   const selectedUserId = useAppStore((state) => state.selectedUserId);
   const activeBoatTrip = useAppStore((state) => state.activeBoatTrip);
   const letters = useAppStore((state) => state.letters);
+  const recentlyLeveledUpId = useAppStore((state) => state.recentlyLeveledUpId);
   const selectIsland = useAppStore((state) => state.selectIsland);
   const clearBoatTrip = useAppStore((state) => state.clearBoatTrip);
   const goTo = useAppStore((state) => state.goTo);
@@ -52,9 +54,12 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
         selectedUserId={selectedUserId}
         activeBoatTrip={activeBoatTrip}
         letters={letters}
+        recentlyLeveledUpId={recentlyLeveledUpId}
         onSelectIsland={handleSelectIsland}
         onBoatComplete={clearBoatTrip}
       />
+
+      <MyIslandLevelBox />
 
       <header className="world-topbar">
         <button className="brand-pill" onClick={() => goTo("world")}>

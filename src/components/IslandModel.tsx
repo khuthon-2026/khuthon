@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Float, Html, Sparkles, useCursor, useGLTF } from "@react-three/drei";
 import {
@@ -30,7 +30,10 @@ type Palette = {
   detail: string;
 };
 
-const GLB_ISLAND_URL = "/models/island.glb";
+function islandGlbUrlForLevel(level: number) {
+  const clamped = Math.min(5, Math.max(1, Math.round(level)));
+  return `/models/island-lv${clamped}.glb`;
+}
 
 const islandPalettes: Record<IslandType, Palette> = {
   dreamy: {
@@ -194,6 +197,17 @@ function IslandLabel({
   isCurrent: boolean;
   selected: boolean;
 }) {
+  const keywordEmoji = (keyword: string) => {
+    if (keyword.includes("자연") || keyword.includes("힐링") || keyword.includes("숲")) return "🌿";
+    if (keyword.includes("몽환") || keyword.includes("감성") || keyword.includes("필름")) return "🌙";
+    if (keyword.includes("외힙") || keyword.includes("힙합") || keyword.includes("비트")) return "🎧";
+    if (keyword.includes("실험") || keyword.includes("인디") || keyword.includes("기묘")) return "🧪";
+    if (keyword.includes("잔잔") || keyword.includes("사유") || keyword.includes("다큐")) return "🌊";
+    if (keyword.includes("스트릿") || keyword.includes("패션")) return "🧢";
+    if (keyword.includes("스릴러") || keyword.includes("반전") || keyword.includes("범죄")) return "🕵️";
+    return "✨";
+  };
+
   return (
     <Html
       position={[0, height, 0]}
@@ -203,7 +217,12 @@ function IslandLabel({
       <div className={`world-island-label ${isCurrent ? "current" : ""} ${selected ? "selected" : ""}`}>
         <div className="world-keyword-row">
           {[user.keyword1, user.keyword2, user.keyword3].map((keyword) => (
-            <span key={keyword}>{keyword}</span>
+            <span className="world-keyword-chip" key={keyword}>
+              <span className="world-keyword-emoji" aria-hidden>
+                {keywordEmoji(keyword)}
+              </span>
+              <span className="world-keyword-text">{keyword}</span>
+            </span>
           ))}
         </div>
         <div className="world-nameplate">
@@ -379,7 +398,10 @@ export function IslandModel({
 }: IslandModelProps) {
   const [hovered, setHovered] = useState(false);
   const rootRef = useRef<Group>(null);
-  const gltf = useGLTF(GLB_ISLAND_URL) as { scene: Group };
+  const modelRef = useRef<Group>(null);
+  const levelUpStartRef = useRef<number | null>(null);
+  const [levelUpBurst, setLevelUpBurst] = useState(false);
+  const gltf = useGLTF(islandGlbUrlForLevel(user.islandLevel)) as { scene: Group };
   const palette = islandPalettes[user.islandType];
   const seed = islandSeed(user.id);
   const variation = islandVariations[user.islandType];
@@ -395,6 +417,13 @@ export function IslandModel({
   const surfaceY = Math.max(0.56, normalizedHeight * levelScale * currentScale * 0.72);
   const rotationY = variation.rotation + (seed - 0.5) * 0.7;
 
+  useEffect(() => {
+    if (leveledUp) {
+      levelUpStartRef.current = performance.now();
+      setLevelUpBurst(true);
+    }
+  }, [leveledUp, user.islandLevel]);
+
   useCursor(hovered);
   useFrame((state) => {
     if (!rootRef.current) {
@@ -405,6 +434,20 @@ export function IslandModel({
     const levelPop = leveledUp ? Math.sin(state.clock.elapsedTime * 8) * 0.035 : 0;
     const target = selected ? 1.13 : hovered ? 1.07 : isCurrent ? 1.03 : 1;
     rootRef.current.scale.setScalar(MathUtils.lerp(rootRef.current.scale.x, target + pulse + levelPop, 0.08));
+
+    // 섬 부유감(텍스트/라벨은 흔들리지 않게 모델만 살짝)
+    if (modelRef.current) {
+      const bob = Math.sin(state.clock.elapsedTime * 0.75 + seed * 12) * 0.035;
+      modelRef.current.position.y = MathUtils.lerp(modelRef.current.position.y, bob, 0.08);
+    }
+
+    if (levelUpStartRef.current !== null) {
+      const elapsed = (performance.now() - levelUpStartRef.current) / 1000;
+      if (elapsed > 2.0) {
+        levelUpStartRef.current = null;
+        setLevelUpBurst(false);
+      }
+    }
   });
 
   return (
@@ -421,67 +464,94 @@ export function IslandModel({
       }}
       onPointerOut={() => setHovered(false)}
     >
-      <Float speed={1.2} floatIntensity={0.14} rotationIntensity={0.06}>
-        <group>
-          <mesh position={[0, 0.035, 0]} rotation-x={-Math.PI / 2}>
-            <ringGeometry args={[1.26, leveledUp ? 1.42 : 1.32, 96]} />
-            <meshBasicMaterial
-              color={leveledUp ? palette.glow : palette.accent}
-              transparent
-              opacity={leveledUp ? 0.6 : selected || isCurrent ? 0.42 : 0.16}
-            />
-          </mesh>
-          {leveledUp && (
-            <Sparkles
-              count={34}
-              scale={[2.7, 1.45, 2.7]}
-              size={3}
-              speed={0.45}
-              color={palette.glow}
-              position={[0, 1.1, 0]}
-            />
-          )}
-
-          <group rotation-y={rotationY}>
-            <primitive
-              object={scene}
-              scale={[
-                modelScale * variation.scale[0],
-                modelScale * variation.scale[1],
-                modelScale * variation.scale[2]
-              ]}
-            />
-
-            <group position={[0, surfaceY, 0]} scale={0.92 + user.islandLevel * 0.06}>
-              <IslandDecorations
-                type={user.islandType}
-                level={user.islandLevel}
-                palette={palette}
-                seed={seed}
-              />
-            </group>
-
-            {hasBottle && (
-              <group position={[-1.08, surfaceY + 0.12, 0.66]} rotation-z={0.6}>
-                <mesh>
-                  <capsuleGeometry args={[0.08, 0.22, 6, 12]} />
-                  <meshStandardMaterial
-                    color="#a7f3d0"
+      <group ref={modelRef}>
+        <Float speed={0.65} floatIntensity={0.08} rotationIntensity={0.035}>
+          <group>
+            {levelUpBurst && (
+              <group>
+                {/* 레벨업 원샷: 확장 링 + 버스트 파티클 (레벨 높을수록 강도 ↑) */}
+                <mesh position={[0, 0.03, 0]} rotation-x={-Math.PI / 2}>
+                  <ringGeometry args={[1.35, 1.42, 128]} />
+                  <meshBasicMaterial
+                    color={palette.glow}
                     transparent
-                    opacity={0.72}
-                    emissive="#2dd4bf"
-                    emissiveIntensity={0.25}
+                    opacity={0.55}
                   />
                 </mesh>
+                <Sparkles
+                  count={28 + user.islandLevel * 16}
+                  scale={[3.2 + user.islandLevel * 0.55, 1.6, 3.2 + user.islandLevel * 0.55]}
+                  size={2.2 + user.islandLevel * 0.35}
+                  speed={0.55}
+                  color={palette.glow}
+                  position={[0, 0.9, 0]}
+                />
               </group>
             )}
-          </group>
+            <mesh position={[0, 0.035, 0]} rotation-x={-Math.PI / 2}>
+              <ringGeometry args={[1.26, leveledUp ? 1.42 : 1.32, 96]} />
+              <meshBasicMaterial
+                color={leveledUp ? palette.glow : palette.accent}
+                transparent
+                opacity={leveledUp ? 0.6 : selected || isCurrent ? 0.42 : 0.16}
+              />
+            </mesh>
+            {leveledUp && (
+              <Sparkles
+                count={16 + user.islandLevel * 10}
+                scale={[2.4 + user.islandLevel * 0.45, 1.35, 2.4 + user.islandLevel * 0.45]}
+                size={2.4 + user.islandLevel * 0.25}
+                speed={0.35}
+                color={palette.glow}
+                position={[0, 1.1, 0]}
+              />
+            )}
 
-          <IslandLabel user={user} height={labelHeight} isCurrent={isCurrent} selected={selected} />
-        </group>
-      </Float>
+            <group rotation-y={rotationY}>
+              <primitive
+                object={scene}
+                scale={[
+                  modelScale * variation.scale[0],
+                  modelScale * variation.scale[1],
+                  modelScale * variation.scale[2]
+                ]}
+              />
+
+              <group position={[0, surfaceY, 0]} scale={0.92 + user.islandLevel * 0.06}>
+                <IslandDecorations
+                  type={user.islandType}
+                  level={user.islandLevel}
+                  palette={palette}
+                  seed={seed}
+                />
+              </group>
+
+              {hasBottle && (
+                <group position={[-1.08, surfaceY + 0.12, 0.66]} rotation-z={0.6}>
+                  <mesh>
+                    <capsuleGeometry args={[0.08, 0.22, 6, 12]} />
+                    <meshStandardMaterial
+                      color="#a7f3d0"
+                      transparent
+                      opacity={0.72}
+                      emissive="#2dd4bf"
+                      emissiveIntensity={0.25}
+                    />
+                  </mesh>
+                </group>
+              )}
+            </group>
+          </group>
+        </Float>
+      </group>
+
+      <IslandLabel user={user} height={labelHeight} isCurrent={isCurrent} selected={selected} />
     </group>
   );
 }
 
-useGLTF.preload(GLB_ISLAND_URL);
+useGLTF.preload(islandGlbUrlForLevel(1));
+useGLTF.preload(islandGlbUrlForLevel(2));
+useGLTF.preload(islandGlbUrlForLevel(3));
+useGLTF.preload(islandGlbUrlForLevel(4));
+useGLTF.preload(islandGlbUrlForLevel(5));
