@@ -20,8 +20,8 @@ export function LoginScreen() {
         </span>
         <h1>니 섬 쩔더라</h1>
         <p>
-          콘텐츠 취향을 하나의 3D 섬으로 만들고, 다른 사람의 섬을 항해하며 좋아요 배와
-          유리병 편지로 연결되는 커뮤니티.
+          콘텐츠 취향을 하나의 3D 섬으로 만들고, 다른 사람의 섬을 항해하며 취향에 좋아요를
+          보내면 상대의 배가 내 섬으로 오고, 유리병 편지로도 연결되는 커뮤니티.
         </p>
         <div className="login-actions">
           <button className="primary-button" onClick={login}>

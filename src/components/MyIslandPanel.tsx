@@ -75,8 +75,8 @@ export function MyIslandPanel() {
           </span>
           <strong>Level {currentUser.islandLevel}</strong>
           <p>
-            좋아요 배를 보낼수록 부두, 등대, 조명이 늘어납니다. 현재 {outgoingLikes}번의 취향
-            연결을 만들었어요.
+            다른 섬의 취향 항목에 좋아요할수록 내 섬 경험치가 쌓이고, 부두·등대·조명이 자라요. 현재{" "}
+            {outgoingLikes}번 연결했어요.
           </p>
         </div>
         <div className="growth-steps">

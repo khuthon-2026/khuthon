@@ -96,8 +96,9 @@ function BoatTripModel({
   const completedRef = useRef(false);
   const from = users.find((user) => user.id === trip.fromUserId);
   const to = users.find((user) => user.id === trip.toUserId);
-  const isBottle = trip.label.includes("유리병");
-  const boatLevel = from?.islandLevel ?? 1;
+  const isBottle = trip.kind === "letter";
+  // 좋아요: 상대(to)의 배가 나(from)에게 옴 → 모델·출발지는 상대 섬 레벨
+  const boatLevel = trip.kind === "like" ? (to?.islandLevel ?? 1) : (from?.islandLevel ?? 1);
 
   useFrame(({ clock }) => {
     if (!from || !to || !groupRef.current) {
@@ -111,32 +112,56 @@ function BoatTripModel({
     const elapsed = clock.elapsedTime - startRef.current;
     const t = Math.min(1, elapsed / 3.2);
     const eased = 1 - Math.pow(1 - t, 3);
-    const fromVector = new Vector3(from.islandPositionX, 0.28, from.islandPositionY);
-    const toCenterVector = new Vector3(to.islandPositionX, 0.28, to.islandPositionY);
 
-    // 도착 지점은 섬 "중앙"이 아니라 "외곽" (접근 방향 기준으로 살짝 앞에서 정박)
-    const dir = new Vector3(
-      to.islandPositionX - from.islandPositionX,
-      0,
-      to.islandPositionY - from.islandPositionY
-    );
-    if (dir.lengthSq() > 0.0001) {
-      dir.normalize();
+    const fromCenter = new Vector3(from.islandPositionX, 0.28, from.islandPositionY);
+    const toCenter = new Vector3(to.islandPositionX, 0.28, to.islandPositionY);
+
+    let startVector: Vector3;
+    let endVector: Vector3;
+    let faceDx: number;
+    let faceDz: number;
+
+    if (trip.kind === "like") {
+      // 상대(to) 출발 → 나(from) 쪽 외곽으로 정박
+      const travel = new Vector3(
+        from.islandPositionX - to.islandPositionX,
+        0,
+        from.islandPositionY - to.islandPositionY
+      );
+      if (travel.lengthSq() > 0.0001) {
+        travel.normalize();
+      } else {
+        travel.set(0, 0, 1);
+      }
+      const offFromThem = 1.85 + (to.islandLevel - 1) * 0.25;
+      const offNearMe = 1.85 + (from.islandLevel - 1) * 0.25;
+      startVector = toCenter.clone().addScaledVector(travel, offFromThem);
+      endVector = fromCenter.clone().addScaledVector(travel, -offNearMe);
+      faceDx = travel.x;
+      faceDz = travel.z;
     } else {
-      dir.set(0, 0, 1);
+      // 유리병: 내가 보내는 경로 (from → to)
+      const dir = new Vector3(
+        to.islandPositionX - from.islandPositionX,
+        0,
+        to.islandPositionY - from.islandPositionY
+      );
+      if (dir.lengthSq() > 0.0001) {
+        dir.normalize();
+      } else {
+        dir.set(0, 0, 1);
+      }
+      const arrivalOffset = 1.85 + (to.islandLevel - 1) * 0.25;
+      startVector = fromCenter.clone();
+      endVector = toCenter.clone().addScaledVector(dir, -arrivalOffset);
+      faceDx = to.islandPositionX - from.islandPositionX;
+      faceDz = to.islandPositionY - from.islandPositionY;
     }
 
-    // 레벨이 높을수록 섬이 커서 정박 오프셋도 살짝 증가
-    const arrivalOffset = 1.85 + (to.islandLevel - 1) * 0.25;
-    const toVector = toCenterVector.clone().addScaledVector(dir, -arrivalOffset);
-
-    const position = fromVector.lerp(toVector, eased);
+    const position = startVector.lerp(endVector, eased);
     const bob = Math.sin(elapsed * 8) * 0.08;
     groupRef.current.position.set(position.x, position.y + bob, position.z);
-    groupRef.current.rotation.y = Math.atan2(
-      to.islandPositionX - from.islandPositionX,
-      to.islandPositionY - from.islandPositionY
-    );
+    groupRef.current.rotation.y = Math.atan2(faceDx, faceDz);
 
     if (t >= 1 && !completedRef.current) {
       completedRef.current = true;

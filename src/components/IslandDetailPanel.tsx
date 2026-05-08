@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ExternalLink, HeartHandshake, MessageCircle, Music2, Play, Ship } from "lucide-react";
+import { ExternalLink, Heart, MessageCircle, Music2, Play, Ship } from "lucide-react";
 import { motion } from "framer-motion";
 import { islandDistanceLabel, CURRENT_USER_ID } from "../data/tasteData";
 import { useAppStore } from "../store/useAppStore";
@@ -56,14 +56,13 @@ export function IslandDetailPanel({ user, currentUser }: IslandDetailPanelProps)
     [mediaItems, user.id]
   );
 
-  const alreadyLiked = focusedMedia
-    ? likes.some(
-        (like) =>
-          like.fromUserId === CURRENT_USER_ID &&
-          like.toUserId === user.id &&
-          like.mediaItemId === focusedMedia.id
-      )
-    : false;
+  const isLiked = (mediaId: string) =>
+    likes.some(
+      (like) =>
+        like.fromUserId === CURRENT_USER_ID && like.toUserId === user.id && like.mediaItemId === mediaId
+    );
+
+  const alreadyLikedFocused = focusedMedia ? isLiked(focusedMedia.id) : false;
 
   const selectedMedia = focusedMedia ?? userMedia[0];
 
@@ -111,10 +110,10 @@ export function IslandDetailPanel({ user, currentUser }: IslandDetailPanelProps)
                 <button
                   className="primary-button"
                   onClick={() => likeMedia(user.id, selectedMedia.id)}
-                  disabled={alreadyLiked}
+                  disabled={alreadyLikedFocused}
                 >
-                  <HeartHandshake size={17} />
-                  {alreadyLiked ? "좋아요 배 출항 완료" : "좋아요 배 보내기"}
+                  <Heart size={17} />
+                  {alreadyLikedFocused ? "좋아요함" : "좋아요"}
                 </button>
               </div>
             </>
@@ -125,21 +124,40 @@ export function IslandDetailPanel({ user, currentUser }: IslandDetailPanelProps)
 
         <section className="media-list">
           <h3>섬 위 콘텐츠</h3>
-          {userMedia.map((item) => (
-            <button
-              className={`media-card ${focusedMedia?.id === item.id ? "selected" : ""}`}
-              key={item.id}
-              onClick={() => setFocusedMedia(item)}
-            >
-              <span className="media-thumb" style={{ background: item.thumbnail }} />
-              <span>
-                <strong>{item.title}</strong>
-                <small>
-                  {item.creator} · {item.tags.slice(0, 2).join(", ")}
-                </small>
-              </span>
-            </button>
-          ))}
+          {userMedia.map((item) => {
+            const liked = isLiked(item.id);
+            return (
+              <div
+                className={`media-card ${focusedMedia?.id === item.id ? "selected" : ""}`}
+                key={item.id}
+              >
+                <button type="button" className="media-card-main" onClick={() => setFocusedMedia(item)}>
+                  <span className="media-thumb" style={{ background: item.thumbnail }} />
+                  <span className="media-card-text">
+                    <strong>{item.title}</strong>
+                    <small>
+                      {item.creator} · {item.tags.slice(0, 2).join(", ")}
+                    </small>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className={`media-card-like ${liked ? "liked" : ""}`}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    if (!liked) {
+                      likeMedia(user.id, item.id);
+                    }
+                  }}
+                  disabled={liked}
+                  title={liked ? "이미 좋아요함" : "이 취향에 좋아요"}
+                >
+                  <Heart size={16} fill={liked ? "currentColor" : "none"} />
+                  <span>{liked ? "완료" : "좋아요"}</span>
+                </button>
+              </div>
+            );
+          })}
         </section>
 
         <button className="letter-button" onClick={() => setIsBottleOpen(true)}>

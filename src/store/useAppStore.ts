@@ -185,7 +185,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           id,
           fromUserId: CURRENT_USER_ID,
           toUserId,
-          label: leveledUpMyId ? "좋아요 배 출항 · 내 섬 경험치 상승" : "좋아요 배 출항",
+          label: leveledUpMyId ? "상대의 배가 내 섬으로 · 경험치 상승" : "상대의 배가 내 섬으로 옵니다",
           kind: "like"
         },
         pendingLikeTargetId: toUserId,
