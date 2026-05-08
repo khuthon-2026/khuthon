@@ -3,26 +3,52 @@ import { OnboardingFlow } from "./components/OnboardingFlow";
 import { KeywordReveal } from "./components/KeywordReveal";
 import { UploadScreen } from "./components/UploadScreen";
 import { WorldScreen } from "./components/WorldScreen";
+import { BgmPlayer } from "./components/BgmPlayer";
 import { useAppStore } from "./store/useAppStore";
 
 export default function App() {
   const screen = useAppStore((state) => state.screen);
 
   if (screen === "login") {
-    return <LoginScreen />;
+    return (
+      <>
+        <BgmPlayer />
+        <LoginScreen />
+      </>
+    );
   }
 
   if (screen === "onboarding") {
-    return <OnboardingFlow />;
+    return (
+      <>
+        <BgmPlayer />
+        <OnboardingFlow />
+      </>
+    );
   }
 
   if (screen === "keywords") {
-    return <KeywordReveal />;
+    return (
+      <>
+        <BgmPlayer />
+        <KeywordReveal />
+      </>
+    );
   }
 
   if (screen === "upload") {
-    return <UploadScreen />;
+    return (
+      <>
+        <BgmPlayer />
+        <UploadScreen />
+      </>
+    );
   }
 
-  return <WorldScreen mode={screen === "myIsland" ? "myIsland" : "world"} />;
+  return (
+    <>
+      <BgmPlayer />
+      <WorldScreen mode={screen === "myIsland" ? "myIsland" : "world"} />
+    </>
+  );
 }
