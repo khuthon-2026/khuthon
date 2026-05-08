@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+.env.local
+*.log
+vite-dev.out.log
+vite-dev.err.log
+.edge-verify-*
+verification-*.png
