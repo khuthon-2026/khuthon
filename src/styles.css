@@ -187,6 +187,107 @@ a {
   margin-top: 2rem;
 }
 
+/* ── 소셜 로그인 시트 ── */
+.social-login-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-end;
+}
+
+.social-login-sheet-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 10, 22, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.social-login-sheet-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  padding: 1.6rem 2rem 2.5rem;
+  background:
+    linear-gradient(180deg, rgba(10, 22, 42, 0.98) 0%, rgba(7, 17, 31, 0.99) 100%);
+  backdrop-filter: blur(24px);
+}
+
+.social-sheet-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: 1.4rem;
+  transition: background 150ms ease;
+}
+
+.social-sheet-back:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text);
+}
+
+.social-sheet-brand {
+  margin-bottom: 1.6rem;
+}
+
+.social-sheet-brand h2 {
+  margin: 0.4rem 0 0.3rem;
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.social-sheet-brand p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.social-sheet-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.4rem;
+}
+
+.social-login-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.9rem;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 150ms ease, transform 150ms ease;
+}
+
+.social-login-btn:hover {
+  filter: brightness(0.93);
+}
+
+.social-sheet-terms {
+  margin: 0;
+  color: #4a5568;
+  font-size: 0.75rem;
+  text-align: center;
+  line-height: 1.5;
+}
+
 .microcopy {
   color: var(--muted);
   font-size: 0.88rem;
@@ -201,8 +302,22 @@ a {
   perspective: 900px;
 }
 
+.login-island-canvas-wrap {
+  position: absolute;
+  inset: 2% 0 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.login-island-canvas-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .diorama-water {
   position: absolute;
+  z-index: 0;
   inset: 11% 3% 2%;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
@@ -214,46 +329,6 @@ a {
     inset 0 0 4rem rgba(103, 232, 249, 0.2),
     0 3rem 8rem rgba(0, 0, 0, 0.32);
   transform: rotateX(66deg) rotateZ(-9deg);
-}
-
-.floating-island {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 9.6rem;
-  height: 6.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 48% 52% 54% 46%;
-  color: #05111d;
-  font-weight: 900;
-  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.34);
-  animation: floaty 4s ease-in-out infinite;
-}
-
-.floating-island span {
-  border-radius: 999px;
-  padding: 0.45rem 0.7rem;
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.island-a {
-  left: 19%;
-  top: 28%;
-  background: linear-gradient(135deg, #334155, #22d3ee 70%, #f472b6);
-}
-
-.island-b {
-  right: 14%;
-  top: 20%;
-  background: linear-gradient(135deg, #8bd3dd, #f9a8d4);
-  animation-delay: -1.4s;
-}
-
-.island-c {
-  left: 42%;
-  bottom: 12%;
-  background: linear-gradient(135deg, #7c3aed, #2dd4bf);
-  animation-delay: -2.2s;
 }
 
 .boat-dot,
