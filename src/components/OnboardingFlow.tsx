@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronRight, Compass, Layers3, Map as MapIcon, Route } from "lucide-react";
+import { ChevronRight, Compass, Map as MapIcon, Route } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   mainCategories,
@@ -9,6 +9,10 @@ import {
 } from "../data/tasteData";
 import { useAppStore } from "../store/useAppStore";
 import { OnboardingCategoryIsland } from "./OnboardingCategoryIsland";
+import { OnboardingMergeCanvas, type OnboardingMergeGlbVariant } from "./OnboardingMergeStage";
+
+/** 병합(로딩) 오버레이 ↔ GLB 연출 시간 */
+const MERGE_OVERLAY_MS = 2800;
 
 const steps = [
   {
@@ -61,6 +65,16 @@ export function OnboardingFlow() {
     stepIndex === 0 ? selectedMain : stepIndex === 1 ? selectedMiddle : selectedSub;
   const canProceed = activeSelection.length > 0;
 
+  const mergeGlbVariant: OnboardingMergeGlbVariant =
+    stepIndex === 0 ? "main" : stepIndex === 1 ? "middle" : "sub";
+
+  const mergeDetailCopy =
+    stepIndex === 0
+      ? "취향 방향에 맞춰 대륙의 실루엣을 새깁니다."
+      : stepIndex === 1
+        ? "분위기에 맞게 지형 디테일을 다듬습니다."
+        : "키워드를 새기며 섬의 표면을 완성합니다.";
+
   const handleToggle = (value: string) => {
     if (stepIndex === 0) {
       setSelectedMain((current) => toggleValue(current, value));
@@ -92,7 +106,7 @@ export function OnboardingFlow() {
       }
 
       completeOnboarding(selectedMain, selectedMiddle, selectedSub);
-    }, 1080);
+    }, MERGE_OVERLAY_MS);
   };
 
   useEffect(
@@ -179,7 +193,7 @@ export function OnboardingFlow() {
                   selected ? "selected" : ""
                 }`}
                 key={option}
-                layout
+                layout={!isMerging}
                 style={{ "--i": index } as CSSProperties}
                 onClick={() => handleToggle(option)}
                 initial={{ opacity: 0, scale: 0.72, y: 34, rotate: index % 2 ? 2 : -2 }}
@@ -187,8 +201,9 @@ export function OnboardingFlow() {
                   opacity: 1,
                   scale: selected && isMerging ? 0.58 : selected ? 1.04 : 1,
                   rotate: selected && isMerging ? 0 : index % 2 ? 1.5 : -1.5,
-                  x: selected && isMerging ? 0 : undefined,
-                  y: selected && isMerging ? 0 : undefined
+                  /* 로딩(merge-core)과 동일: 스테이지 정중앙 */
+                  x: selected && isMerging ? "-50%" : undefined,
+                  y: selected && isMerging ? "-50%" : undefined
                 }}
                 exit={{ opacity: 0, scale: 0.7 }}
                 transition={{
@@ -214,13 +229,28 @@ export function OnboardingFlow() {
           {isMerging && (
             <motion.div
               className="merge-core"
-              initial={{ opacity: 0, scale: 0.4 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.22 }}
-              transition={{ duration: 0.88, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+              role="status"
+              aria-live="polite"
+              aria-label="취향 지형 합성 중"
             >
-              <Layers3 size={26} />
-              <span>새 지형을 그리는 중</span>
+              <div className="merge-core-canvas-wrap" aria-hidden="true">
+                <OnboardingMergeCanvas
+                  key={`${mergeGlbVariant}-${stepIndex}`}
+                  variant={mergeGlbVariant}
+                />
+              </div>
+              <div className="merge-core-inner">
+                <span className="merge-core-eyebrow">Topography synthesis</span>
+                <p className="merge-core-headline">새 지형을 그리는 중</p>
+                <p className="merge-core-detail">{mergeDetailCopy}</p>
+                <div className="merge-core-meter" aria-hidden>
+                  <span className="merge-core-meter-fill" />
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
