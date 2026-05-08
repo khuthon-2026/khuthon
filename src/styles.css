@@ -1356,6 +1356,7 @@ a {
 /* 하카테고리(step2): 기본 크기 유지하되 간격 조금 더 넓게 */
 .island-scatter-step2 {
   gap: 3.2rem 2.8rem;
+  padding-left: min(29rem, 37vw);
 }
 
 /* 머지 중에는 선택된 섬만 선명하게 */
@@ -1372,6 +1373,17 @@ a {
     align-content: flex-start;
     overflow-y: auto;
   }
+}
+
+/* step 1·2 merge-core 가운데 정렬 래퍼 */
+.merge-overlay-center {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 .merge-core {

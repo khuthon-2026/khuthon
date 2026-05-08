@@ -326,31 +326,33 @@ export function OnboardingFlow() {
           </section>
           <AnimatePresence>
             {isMerging && (
-              <motion.div
-                className="merge-core"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
-                role="status"
-                aria-live="polite"
-                aria-label="취향 지형 합성 중"
-              >
-                <div className="merge-core-canvas-wrap" aria-hidden="true">
-                  <OnboardingMergeCanvas
-                    key={`${mergeGlbVariant}-${stepIndex}`}
-                    variant={mergeGlbVariant}
-                  />
-                </div>
-                <div className="merge-core-inner">
-                  <span className="merge-core-eyebrow">Topography synthesis</span>
-                  <p className="merge-core-headline">새 지형을 그리는 중</p>
-                  <p className="merge-core-detail">{mergeDetailCopy}</p>
-                  <div className="merge-core-meter" aria-hidden>
-                    <span className="merge-core-meter-fill" />
+              <div className="merge-overlay-center">
+                <motion.div
+                  className="merge-core"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+                  role="status"
+                  aria-live="polite"
+                  aria-label="취향 지형 합성 중"
+                >
+                  <div className="merge-core-canvas-wrap" aria-hidden="true">
+                    <OnboardingMergeCanvas
+                      key={`${mergeGlbVariant}-${stepIndex}`}
+                      variant={mergeGlbVariant}
+                    />
                   </div>
-                </div>
-              </motion.div>
+                  <div className="merge-core-inner">
+                    <span className="merge-core-eyebrow">Topography synthesis</span>
+                    <p className="merge-core-headline">새 지형을 그리는 중</p>
+                    <p className="merge-core-detail">{mergeDetailCopy}</p>
+                    <div className="merge-core-meter" aria-hidden>
+                      <span className="merge-core-meter-fill" />
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
             )}
           </AnimatePresence>
         </>
