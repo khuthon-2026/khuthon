@@ -9,6 +9,7 @@ import { MyIslandPanel } from "./MyIslandPanel";
 
 export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
   const users = useAppStore((state) => state.users);
+  const mediaItems = useAppStore((state) => state.mediaItems);
   const selectedUserId = useAppStore((state) => state.selectedUserId);
   const activeBoatTrip = useAppStore((state) => state.activeBoatTrip);
   const letters = useAppStore((state) => state.letters);
@@ -24,7 +25,8 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
     .map((user) => ({
       user,
       score: similarityScore(currentUser, user),
-      label: islandDistanceLabel(currentUser, user)
+      label: islandDistanceLabel(currentUser, user),
+      media: mediaItems.find((item) => item.userId === user.id) ?? null
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 3);
@@ -91,10 +93,12 @@ export function WorldScreen({ mode }: { mode: "world" | "myIsland" }) {
           <Database size={15} />
           취향 거리 시각화
         </span>
-        {nearestUsers.map(({ user, score, label }) => (
+        {nearestUsers.map(({ user, score, label, media }) => (
           <button key={user.id} onClick={() => handleSelectIsland(user.id)}>
             <strong>{user.nickname}</strong>
-            <span>{label}</span>
+            <span>
+              {media ? `${media.platform} · ${media.title}` : label}
+            </span>
             <meter min={0} max={1} value={score} />
           </button>
         ))}

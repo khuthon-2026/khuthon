@@ -138,6 +138,16 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     set((state) => {
       let leveledUpTargetId: string | null = null;
+      let leveledUpMyId: string | null = null;
+
+      const me = state.users.find((user) => user.id === CURRENT_USER_ID);
+      const nextMyExp = (me?.affinityPoints ?? 0) + 1;
+      const nextMyLevel = levelFromLikes(nextMyExp);
+      const nextMyGrowth = growthStateFromLevel(nextMyLevel);
+      if (me && nextMyLevel > me.islandLevel) {
+        leveledUpMyId = CURRENT_USER_ID;
+      }
+
       const likes = [
         ...state.likes,
         {
@@ -154,31 +164,32 @@ export const useAppStore = create<AppState>((set, get) => ({
         users: state.users.map((user) =>
           user.id === toUserId
             ? (() => {
+                // 상대방은 "좋아요"를 받아 likes만 오름.
+                // 상대의 경험치/레벨/성장 상태는 절대 변경하지 않는다.
                 const nextLikes = user.likes + 1;
-                const nextLevel = levelFromLikes(nextLikes);
-                if (nextLevel > user.islandLevel) {
-                  leveledUpTargetId = user.id;
-                }
-
                 return {
                   ...user,
-                  likes: nextLikes,
-                  affinityPoints: user.affinityPoints + 1,
-                  islandLevel: nextLevel,
-                  growthState: growthStateFromLevel(nextLevel)
+                  likes: nextLikes
                 };
               })()
-            : user
+            : user.id === CURRENT_USER_ID
+              ? {
+                  ...user,
+                  affinityPoints: nextMyExp,
+                  islandLevel: nextMyLevel,
+                  growthState: nextMyGrowth
+                }
+              : user
         ),
         activeBoatTrip: {
           id,
           fromUserId: CURRENT_USER_ID,
           toUserId,
-          label: leveledUpTargetId ? "좋아요 배 도착 · 섬 레벨업" : "좋아요 배 출항",
+          label: leveledUpMyId ? "좋아요 배 출항 · 내 섬 경험치 상승" : "좋아요 배 출항",
           kind: "like"
         },
         pendingLikeTargetId: toUserId,
-        recentlyLeveledUpId: leveledUpTargetId
+        recentlyLeveledUpId: leveledUpMyId
       };
     });
 

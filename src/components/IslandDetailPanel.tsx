@@ -11,6 +11,30 @@ interface IslandDetailPanelProps {
   currentUser: User;
 }
 
+function mediaPreviewUrl(item: MediaItem) {
+  // "실제로 있는 미디어"로 자연스럽게 연결: 플랫폼 홈이 아니라 검색/콘텐츠 탐색 URL 사용
+  const query = encodeURIComponent(`${item.title} ${item.creator}`);
+  if (item.platform === "Spotify") {
+    return `https://open.spotify.com/search/${query}`;
+  }
+  if (item.platform === "YouTube") {
+    return `https://www.youtube.com/results?search_query=${query}`;
+  }
+  if (item.platform === "Apple Music") {
+    return `https://music.apple.com/search?term=${query}`;
+  }
+  if (item.platform === "Netflix") {
+    return `https://www.netflix.com/search?q=${query}`;
+  }
+  if (item.platform === "TikTok") {
+    return `https://www.tiktok.com/search?q=${query}`;
+  }
+  if (item.platform === "Instagram") {
+    return `https://www.instagram.com/explore/search/keyword/?q=${query}`;
+  }
+  return item.url;
+}
+
 function PlatformBadge({ item }: { item: MediaItem }) {
   return (
     <span className="platform-badge">
@@ -80,7 +104,7 @@ export function IslandDetailPanel({ user, currentUser }: IslandDetailPanelProps)
                 ))}
               </div>
               <div className="viewer-actions">
-                <a className="secondary-button" href={selectedMedia.url} target="_blank" rel="noreferrer">
+                <a className="secondary-button" href={mediaPreviewUrl(selectedMedia)} target="_blank" rel="noreferrer">
                   <ExternalLink size={16} />
                   미리보기 열기
                 </a>
