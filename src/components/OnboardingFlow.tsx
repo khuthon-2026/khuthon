@@ -12,17 +12,17 @@ import { OnboardingCategoryIsland } from "./OnboardingCategoryIsland";
 
 const steps = [
   {
-    title: "대카테고리 선택",
+    title: "취향 방향 선택",
     description: "취향 바다에 띄울 첫 섬 조각을 고르세요.",
-    helper: "여러 항로를 동시에 열 수 있어요"
+    helper: "여러 조각을 동시에 선택할 수 있어요"
   },
   {
-    title: "중카테고리 선택",
+    title: "분위기 정하기",
     description: "조금 더 안쪽으로 들어가 지형을 좁혀봅니다.",
     helper: "선택한 섬들이 하나의 항로로 이어져요"
   },
   {
-    title: "소카테고리 선택",
+    title: "키워드 고르기",
     description: "섬 위에 남길 가장 선명한 표식을 고르세요.",
     helper: "이 표식들이 내 섬의 키워드가 됩니다"
   }

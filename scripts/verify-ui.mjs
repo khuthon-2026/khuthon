@@ -282,20 +282,20 @@ try {
   await screenshot(send, screenshots.login);
 
   await click(send, "데모 로그인", 800);
-  await assertText(send, "대카테고리 선택");
+  await assertText(send, "취향 방향 선택");
   await screenshot(send, screenshots.onboarding);
   await click(send, "음악", 120);
   await click(send, "영화/드라마", 120);
   await click(send, "유튜브", 120);
   await click(send, "다음", 2800);
 
-  await assertText(send, "중카테고리 선택");
+  await assertText(send, "분위기 정하기");
   await click(send, "힙합", 120);
   await click(send, "스릴러", 120);
   await click(send, "브이로그", 120);
   await click(send, "다음", 2800);
 
-  await assertText(send, "소카테고리 선택");
+  await assertText(send, "키워드 고르기");
   await click(send, "켄드릭 라마", 120);
   await click(send, "타일러 더 크리에이터", 120);
   await click(send, "데이비드 핀처", 120);
